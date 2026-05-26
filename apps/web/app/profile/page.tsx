@@ -6,9 +6,9 @@ import {
   Save,
   X,
   Camera,
-  Github,
-  Linkedin,
-  Twitter,
+  Code, 
+  Briefcase,
+  Share2,
   Globe,
   Mail,
   MapPin,
@@ -343,7 +343,7 @@ const ProfilePage: React.FC = () => {
                 {/* GitHub */}
                 <div>
                   <label className="block text-sm font-semibold text-slate-300 mb-2 flex items-center gap-2">
-                    <Github size={16} className="text-slate-400" />
+                    <Code size={16} className="text-slate-400" />
                     GitHub
                   </label>
                   {isEditing ? (
@@ -375,7 +375,7 @@ const ProfilePage: React.FC = () => {
                 {/* LinkedIn */}
                 <div>
                   <label className="block text-sm font-semibold text-slate-300 mb-2 flex items-center gap-2">
-                    <Linkedin size={16} className="text-slate-400" />
+                    <Briefcase size={16} className="text-slate-400" />
                     LinkedIn
                   </label>
                   {isEditing ? (
@@ -407,7 +407,7 @@ const ProfilePage: React.FC = () => {
                 {/* Twitter */}
                 <div>
                   <label className="block text-sm font-semibold text-slate-300 mb-2 flex items-center gap-2">
-                    <Twitter size={16} className="text-slate-400" />
+                    <X size={16} className="text-slate-400" />
                     Twitter
                   </label>
                   {isEditing ? (
