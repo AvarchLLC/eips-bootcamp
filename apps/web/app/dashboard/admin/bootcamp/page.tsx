@@ -18,7 +18,7 @@ export default async function AdminETHShalaPage() {
   }
 
   const userRole = (user as any).role || 'user';
-  if (userRole !== 'ADMIN' && userRole !== 'admin' && user.id !== 'user_3EFohPWsEpwDDfFQxcf3i1T39pJ') {
+  if (userRole !== 'ADMIN' && userRole !== 'admin') {
     redirect("/dashboard");
   }
 

@@ -19,7 +19,7 @@ export async function PATCH(
   }
 
   const userRole = (sessionClaims?.metadata as any)?.role || (sessionClaims as any)?.role || (user as any)?.role;
-  if (userRole !== 'admin' && userRole !== 'ADMIN' && userId !== 'user_3EFohPWsEpwDDfFQxcf3i1T39pJ') {
+  if (userRole !== 'admin' && userRole !== 'ADMIN') {
     return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
   }
 
@@ -54,7 +54,7 @@ export async function DELETE(
   }
 
   const userRole = (sessionClaims?.metadata as any)?.role || (sessionClaims as any)?.role || (user as any)?.role;
-  if (userRole !== 'admin' && userRole !== 'ADMIN' && userId !== 'user_3EFohPWsEpwDDfFQxcf3i1T39pJ') {
+  if (userRole !== 'admin' && userRole !== 'ADMIN') {
     return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
   }
 

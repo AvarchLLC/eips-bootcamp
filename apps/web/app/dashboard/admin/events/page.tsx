@@ -25,7 +25,7 @@ export default function AdminEventsPage() {
   const [moduleId, setModuleId] = useState('');
 
   const checkAdmin = () => {
-    const isAdmin = (user as any)?.role === 'ADMIN' || (user as any)?.role === 'admin' || (user as any)?.role?.role === 'ADMIN' || (user as any)?.role?.role === 'admin' || user?.id === 'user_3EFohPWsEpwDDfFQxcf3i1T39pJ';
+    const isAdmin = (user as any)?.role === 'ADMIN' || (user as any)?.role === 'admin' || (user as any)?.role?.role === 'ADMIN' || (user as any)?.role?.role === 'admin';
     if (!isAdmin && user) {
       router.push('/dashboard');
     }

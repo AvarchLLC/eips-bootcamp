@@ -13,7 +13,7 @@ async function verifyAdmin() {
   if (!userId) throw new Error("Unauthorized");
   
   const userRole = (user as any)?.role || 'user';
-  if (userRole !== 'admin' && userRole !== 'ADMIN' && userId !== 'user_3EFohPWsEpwDDfFQxcf3i1T39pJ') {
+  if (userRole !== 'admin' && userRole !== 'ADMIN') {
     throw new Error("Forbidden");
   }
   return userId;

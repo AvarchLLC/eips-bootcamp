@@ -150,7 +150,7 @@ export function Sidebar({ mobileOpen, onMobileClose, collapsed, toggleSidebar, }
 
   const { data: session } = useSession();
   const user = session?.user;
-  const isAdmin = (user as any)?.role === 'ADMIN' || (user as any)?.role === 'admin' || (user as any)?.role?.role === 'ADMIN' || (user as any)?.role?.role === 'admin' || user?.id === 'user_3EFohPWsEpwDDfFQxcf3i1T39pJ';
+  const isAdmin = (user as any)?.role === 'ADMIN' || (user as any)?.role === 'admin' || (user as any)?.role?.role === 'ADMIN' || (user as any)?.role?.role === 'admin';
 
   return (
     <>
