@@ -24,7 +24,7 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import { Web3Provider } from "./components/Web3Provider";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.BETTER_AUTH_URL || "https://ethshala.com"),
+  metadataBase: new URL(process.env.BETTER_AUTH_URL || "https://www.ethshala.com"),
   title: {
     default: "ETHShala | Master Ethereum Improvement Proposals",
     template: "%s | ETHShala",
