@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     siteName: "ETHShala",
     images: [
       {
-        url: "https://www.ethshala.com/og-image.png",
+        url: "https://www.ethshala.com/brand/og-image.png",
         width: 1200,
         height: 630,
         alt: "ETHShala Platform",
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "ETHShala | Master Ethereum Improvement Proposals",
     description: "Master the core of Ethereum with ETHShala's gamified learning platform.",
-    images: ["https://www.ethshala.com/og-image.png"],
+    images: ["https://www.ethshala.com/brand/og-image.png"],
     creator: "@ETHShala",
   },
   icons: {
