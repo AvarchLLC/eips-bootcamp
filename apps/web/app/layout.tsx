@@ -35,13 +35,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://ethshala.com",
+    url: "https://www.ethshala.com",
     title: "ETHShala | Master Ethereum Improvement Proposals",
     description: "Learn, contribute, and master the core of Ethereum through our gamified EIP learning platform.",
     siteName: "ETHShala",
     images: [
       {
-        url: "/brand/ethshala_logo.svg",
+        url: "https://www.ethshala.com/og-image.png",
         width: 1200,
         height: 630,
         alt: "ETHShala Platform",
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "ETHShala | Master Ethereum Improvement Proposals",
     description: "Master the core of Ethereum with ETHShala's gamified learning platform.",
-    images: ["/brand/ethshala_logo.svg"],
+    images: ["https://www.ethshala.com/og-image.png"],
     creator: "@ETHShala",
   },
   icons: {
