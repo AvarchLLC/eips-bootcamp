@@ -84,9 +84,7 @@ export async function verifyAdminRole() {
     if (!user) return false;
     
     // Check for admin role in user metadata or custom claims
-    const isAdmin = (user as any).role === 'ADMIN' || (user as any).role === 'admin' || (user as any).role?.role === 'ADMIN' || 
-                   (user as any).role?.role === 'ADMIN' ||
-                   user.id === 'user_3EFohPWsEpwDDfFQxcf3i1T39pJ';
+    const isAdmin = (user as any).role === 'ADMIN' || (user as any).role === 'admin' || (user as any).role?.role === 'ADMIN' || (user as any).role?.role === 'admin';
     
     return isAdmin;
   } catch (error) {

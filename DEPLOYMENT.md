@@ -1,101 +1,236 @@
-# Deployment Guide: ETHShala
+# Deployment Guide: Self-Hosted NestJS & PostgreSQL on Ubuntu + Next.js on Vercel
 
-This guide outlines the strategies and steps for deploying the ETHShala monorepo to production.
+This guide provides a comprehensive, production-grade walkthrough for deploying the **ETHShala** backend (NestJS) and database (PostgreSQL) onto a self-hosted Ubuntu Server, setting up an Nginx reverse proxy with SSL, and connecting it to a Next.js frontend hosted on Vercel.
+
+---
 
 ## Architecture Overview
 
-The project is a monorepo containing:
-- Frontend: Next.js 15 (apps/web)
-- Backend: NestJS 11 (apps/api)
-- Database: PostgreSQL (via Prisma)
-
----
-
-## Strategy 1: Recommended (Hybrid Deployment)
-
-This is the industry-standard approach for NestJS + Next.js projects. It ensures the backend remains persistent and high-performing while leveraging Vercel's edge network for the frontend.
-
-### 1. Frontend: Deploying to Vercel
-1. Connect your GitHub repository to [Vercel](https://vercel.com).
-2. Create a new project for the **Frontend**.
-3. **Settings:**
-   - **Root Directory:** `apps/web`
-   - **Framework Preset:** Next.js
-   - **Build Command:** `pnpm build`
-   - **Install Command:** `pnpm install`
-4. **Environment Variables:**
-   - `NEXT_PUBLIC_API_URL`: `https://api.ethshala.com`
-   - `BETTER_AUTH_SECRET`: Your generated secret
-   - `BETTER_AUTH_URL`: `https://ethshala.com`
-   - `DATABASE_URL`: Your PostgreSQL connection string (if using server-side DB calls in Next.js)
-
-### 2. Backend: Deploying to a Persistent Provider
-Use a provider like **Railway**, **Render**, or **DigitalOcean App Platform**.
-
-1. Connect your GitHub repository to the provider.
-2. Create a new service for the **Backend**.
-3. **Settings:**
-   - **Root Directory:** `apps/api`
-   - **Build Command:** `pnpm build`
-   - **Start Command:** `pnpm start:prod` (or `node dist/main`)
-4. **Environment Variables:**
-   - `PORT`: `8080` (usually provided by the platform)
-   - `DATABASE_URL`: Your PostgreSQL connection string
-   - `CORS_ORIGIN`: `https://ethshala.com` (Your Vercel URL)
-
----
-
-## Strategy 2: All-on-Vercel (Monorepo)
-
-Vercel can host the backend as **Serverless Functions**, but this requires specific configuration.
-
-### 1. Configuration Changes
-You will need a `vercel.json` in `apps/api` to route requests to the NestJS app.
-
-### 2. Limitations
-- **Cold Starts:** The API may have a 1-2 second delay on the first request after inactivity.
-- **Database Connections:** Prisma can exhaust PostgreSQL connections quickly in serverless environments. **Solution:** Use a connection pooling tool like **Prisma Accelerate** or **Supabase Connection Pooling**.
-
----
-
-## Critical Configuration: CORS
-
-For the frontend to communicate with the backend, you must configure Cross-Origin Resource Sharing (CORS) in `apps/api/src/main.ts`.
-
-Update your `bootstrap` function:
-
-```typescript
-app.enableCors({
-  origin: process.env.CORS_ORIGIN || 'https://ethshala.com',
-  credentials: true,
-});
+```mermaid
+graph TD
+    Vercel[Vercel Frontend: Next.js] <-->|HTTPS / API Requests| Nginx[Nginx Reverse Proxy: ethshalaapi.eipsinsight.com]
+    Nginx <-->|Local Proxy: Port 4000| NestJS[NestJS Backend: PM2 Process]
+    NestJS <-->|Localhost Query| Postgres[(PostgreSQL Database)]
+    Vercel <-->|Direct Server Actions| Postgres
 ```
 
 ---
 
-## Database Migration
+## Step 1: Ubuntu Server Initial Configuration
 
-Regardless of the provider, you must run migrations during your build/deploy process:
-
+### 1. SSH into your Ubuntu Server
 ```bash
-# In your deployment build command or post-install script:
-npx prisma generate
-npx prisma db push # Or prisma migrate deploy for production
+ssh user@your_server_ip
 ```
 
-## Summary Table
+### 2. Update System Packages
+```bash
+sudo apt update && sudo apt upgrade -y
+```
 
-| Feature | Vercel (Frontend) | Railway/Render (Backend) |
-| :--- | :--- | :--- |
-| **Primary Use** | UI, Static Assets, SSR | API, Database, Jobs |
-| **Performance** | Edge-optimized | Persistent connectivity |
-| **Reliability** | High | High (Handles WebSockets/Long Tasks) |
-| **Cost** | Free/Paid tiers | Pay-as-you-go |
+### 3. Configure the Firewall (UFW)
+Secure your server by only allowing SSH, HTTP, and HTTPS traffic:
+```bash
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow OpenSSH
+sudo ufw allow 'Nginx Full'
+sudo ufw enable
+```
 
 ---
 
-## Post-Deployment Checklist
-1. [ ] Verify `NEXT_PUBLIC_API_URL` is set correctly on the Frontend.
-2. [ ] Verify `CORS_ORIGIN` matches the Frontend domain on the Backend.
-3. [ ] Ensure the Database is reachable from both providers.
-4. [ ] Test the Authentication flow (Better Auth) on the production domain.
+## Step 2: Install & Configure PostgreSQL
+
+### 1. Install PostgreSQL
+```bash
+sudo apt install postgresql postgresql-contrib -y
+```
+
+### 2. Create the Production Database and User
+Switch to the default `postgres` system user and open the Postgres CLI:
+```bash
+sudo -i -u postgres psql
+```
+Run the following SQL commands to set up your database, user, and password:
+```sql
+CREATE DATABASE ethshala;
+CREATE USER shala_admin WITH PASSWORD 'choose_a_strong_password';
+GRANT ALL PRIVILEGES ON DATABASE ethshala TO shala_admin;
+ALTER DATABASE ethshala OWNER TO shala_admin;
+\q
+```
+
+> [!IMPORTANT]
+> Since Next.js on Vercel uses Server Actions that query the database directly, your database must be accessible externally. Follow the steps below to securely expose PostgreSQL.
+
+### 3. Enable Remote Database Connections (Securely)
+Edit the PostgreSQL configuration file (replace `16` with your installed Postgres version):
+```bash
+sudo nano /etc/postgresql/16/main/postgresql.conf
+```
+Find the `listen_addresses` line, uncomment it, and change it to listen to all interfaces:
+```ini
+listen_addresses = '*'
+```
+
+Next, configure client authentication:
+```bash
+sudo nano /etc/postgresql/16/main/pg_hba.conf
+```
+Add the following line at the end of the file to allow remote password connections securely. Replace `0.0.0.0/0` with Vercel's IP ranges if you want to restrict it, or keep it open if you rely on strong passwords:
+```text
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
+host    ethshala        shala_admin     0.0.0.0/0               scram-sha-256
+```
+
+### 4. Restart PostgreSQL and Allow Port in Firewall
+```bash
+sudo systemctl restart postgresql
+sudo ufw allow 5432/tcp
+```
+
+---
+
+## Step 3: Node.js and Monorepo Environment Setup
+
+### 1. Install Node.js (LTS Version 20 or 22)
+```bash
+# Using NodeSource repository
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
+```
+
+### 2. Install pnpm Globally
+```bash
+sudo npm install -g pnpm
+```
+
+### 3. Clone and Set Up the Monorepo
+Clone your repository into `/var/www/ethshala`:
+```bash
+sudo mkdir -p /var/www/ethshala
+sudo chown -R $USER:$USER /var/www/ethshala
+git clone https://github.com/your-org/eips-bootcamp.git /var/www/ethshala
+cd /var/www/ethshala
+pnpm install
+```
+
+---
+
+## Step 4: Run NestJS Backend with PM2
+
+### 1. Create the Environment File for the API
+Create a `.env` file in `/var/www/ethshala/apps/api/.env`:
+```bash
+nano apps/api/.env
+```
+Add the following configuration:
+```env
+PORT=4000
+DATABASE_URL="postgresql://shala_admin:choose_a_strong_password@localhost:5432/ethshala?schema=public"
+INTERNAL_API_KEY="generate_a_long_secure_random_key"
+CORS_ORIGIN="https://ethshala.vercel.app" # Replace with your Vercel URL
+```
+
+### 2. Generate Prisma Client and Run Migrations
+```bash
+pnpm --filter api build
+```
+This command will trigger Prisma generation and NestJS compilation. Next, apply the schema to your newly created database:
+```bash
+npx prisma db push --schema=prisma/schema.prisma
+```
+
+### 3. Manage NestJS Process using PM2
+Install PM2 globally to manage the NestJS process:
+```bash
+sudo npm install -g pm2
+```
+Start the production server:
+```bash
+pm2 start dist/main.js --name "ethshala-api" --cwd "/var/www/ethshala/apps/api"
+```
+Configure PM2 to automatically restart the backend process on system reboot:
+```bash
+pm2 startup
+# Copy and run the command printed by PM2 in your terminal
+pm2 save
+```
+
+---
+
+## Step 5: Configure Nginx Reverse Proxy & SSL
+
+### 1. Install Nginx
+```bash
+sudo apt install nginx -y
+```
+
+### 2. Create the Server Block Configuration
+Create an Nginx configuration file for your subdomain:
+```bash
+sudo nano /etc/nginx/sites-available/ethshalaapi.eipsinsight.com
+```
+Add the following configuration. This configures Nginx to listen on port 80 and reverse-proxy requests to the NestJS app running locally on port 4000:
+```nginx
+server {
+    listen 80;
+    server_name ethshalaapi.eipsinsight.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:4000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+### 3. Enable the Site and Test Nginx
+Link the site configuration and restart Nginx:
+```bash
+sudo ln -s /etc/nginx/sites-available/ethshalaapi.eipsinsight.com /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+```
+
+### 4. Setup SSL with Let's Encrypt Certbot
+Install Certbot and obtain your SSL certificate:
+```bash
+sudo apt install certbot python3-certbot-nginx -y
+sudo certbot --nginx -d ethshalaapi.eipsinsight.com
+```
+Certbot will automatically verify your domain, obtain the certificate, and rewrite your Nginx configuration to support secure HTTPS with HTTP-to-HTTPS redirects.
+
+---
+
+## Step 6: Connect Vercel Frontend to Self-Hosted API
+
+Now that your self-hosted backend and database are live:
+
+1. Connect your repository to **Vercel** and select `apps/web` as the **Root Directory**.
+2. Configure the following **Environment Variables** in Vercel settings:
+
+| Environment Variable | Production Value | Description |
+| :--- | :--- | :--- |
+| `NEXT_PUBLIC_API_URL` | `https://ethshalaapi.eipsinsight.com` | URL of your self-hosted NestJS backend |
+| `INTERNAL_API_KEY` | `generate_a_long_secure_random_key` | Must match the key set in the NestJS `.env` |
+| `BETTER_AUTH_SECRET` | `generate_a_strong_session_secret` | Secret key used for authenticating sessions |
+| `BETTER_AUTH_URL` | `https://eipsinsight.com` | Your production frontend URL |
+| `DATABASE_URL` | `postgresql://shala_admin:choose_a_strong_password@your_server_ip:5432/ethshala?schema=public` | PostgreSQL connection string pointing to your self-hosted DB |
+
+---
+
+## 🛠️ Post-Deployment Health Verification
+
+After completing the steps, verify the connections:
+1. **Check Nginx Status:** `systemctl status nginx`
+2. **Check NestJS Status:** `pm2 status`
+3. **Verify API Logs:** `pm2 logs ethshala-api`
+4. **Test CORS Connection:** Open your browser console on the Vercel site and check if network requests to `https://ethshalaapi.eipsinsight.com/referrals/leaderboard/all` return successfully without CORS blocks.

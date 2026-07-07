@@ -5,7 +5,21 @@ import { UseReferralDto } from './dto/use-referral.dto';
 
 @Injectable()
 export class ReferralsService {
-  private cachedLeaderboard: any = null;
+  private cachedLeaderboard:
+    | {
+        userId: string;
+        name: string;
+        handle: string;
+        avatarUrl?: string | null;
+        xp: number;
+        referrals: number;
+        capStatus: string;
+        streak: number;
+        modulesCompleted: number;
+        createdAt: Date;
+        rank: number;
+      }[]
+    | null = null;
   private cacheExpiresAt = 0;
 
   constructor(private prisma: PrismaService) {}

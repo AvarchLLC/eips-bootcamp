@@ -13,7 +13,7 @@ export default async function SubmissionsPage({ params }: { params: Promise<{ id
   if (!user) redirect("/sign-in");
   
   const userRole = (user as any)?.role || 'user';
-  if (userRole !== 'admin' && userRole !== 'ADMIN' && user.id !== 'user_3EFohPWsEpwDDfFQxcf3i1T39pJ') {
+  if (userRole !== 'admin' && userRole !== 'ADMIN') {
     redirect("/dashboard");
   }
 

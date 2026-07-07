@@ -52,10 +52,12 @@ export interface CountryStats {
   count: number;
 }
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://127.0.0.1:4000';
+
 // API Integration
 export async function fetchApplications(): Promise<Application[]> {
   try {
-    const response = await fetch('http://127.0.0.1:4000/cap/applications', {
+    const response = await fetch(`${API_BASE}/cap/applications`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     });
@@ -73,7 +75,7 @@ export async function updateApplicationStatus(
   status: 'approved' | 'rejected'
 ): Promise<boolean> {
   try {
-    const response = await fetch(`http://127.0.0.1:4000/cap/${applicationId}`, {
+    const response = await fetch(`${API_BASE}/cap/${applicationId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: status.toUpperCase() }),
