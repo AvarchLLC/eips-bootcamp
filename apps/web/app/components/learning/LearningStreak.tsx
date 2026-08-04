@@ -106,11 +106,20 @@ export const LearningStreak = ({ streakData }: { streakData?: any[] }) => {
       currentWeek = [];
     }
   });
+
+  // Push the current (possibly incomplete) week
+  if (currentWeek.length) weeks.push(currentWeek);
+
+  // Desktop shows the full year
+  const visibleWeeks = weeks;
+
+  // Mobile shows only the latest 12 weeks (including current week)
+  const MOBILE_WEEKS = 12;
+  const mobileWeeks = weeks.slice(-MOBILE_WEEKS);
+
   
   // Added weekday labels
   const weekdays = ['Mon', 'Wed', 'Fri'];
-
-  if (currentWeek.length) weeks.push(currentWeek);
 
   const getColor = (intensity: number) => {
     if (intensity === 0) return 'bg-accent border-border';
@@ -193,9 +202,31 @@ export const LearningStreak = ({ streakData }: { streakData?: any[] }) => {
               </div>
 
               <div>
-
                 {/* Month labels */}
-                <div className="flex gap-1.5 mb-2 h-4">
+
+                {/* Mobile */}
+                <div className="flex gap-1.5 mb-2 h-4 md:hidden">
+                  {mobileWeeks.map((week, index) => {
+                    const date = new Date(week[0].date);
+
+                    const currentMonth = date.getMonth();
+                    const previousMonth =
+                      index > 0
+                        ? new Date(mobileWeeks[index - 1][0].date).getMonth()
+                        : null;
+
+                    return (
+                      <div key={index} className="w-4 text-[11px] text-muted-foreground">
+                        {index === 0 || currentMonth !== previousMonth
+                          ? date.toLocaleString("default", { month: "short" })
+                          : ""}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Desktop */}
+                <div className="hidden md:flex gap-1.5 mb-2 h-4">
                   {weeks.map((week, index) => {
                     const date = new Date(week[0].date);
 
@@ -227,9 +258,33 @@ export const LearningStreak = ({ streakData }: { streakData?: any[] }) => {
 
 
                 {/* Heatmap columns */}
-                <div className="flex gap-1.5">
+                {/* Mobile */}
+                <div className="flex gap-1.5 md:hidden">
+                  {mobileWeeks.map((week, weekIndex) => (
+                    <div
+                      key={weekIndex}
+                      className="flex flex-col gap-1.5"
+                    >
+                      {week.map((day, dayIndex) => {
+                        const dateObj = new Date(day.date);
 
-                  {weeks.map((week, weekIndex) => (
+                        return (
+                          <div
+                            key={dayIndex}
+                            className={`w-4 h-4 rounded-sm border transition-all duration-200 hover:ring-2 hover:ring-emerald-400/50 cursor-pointer group/day relative ${getColor(day.intensity)}`}
+                          >
+                            {/* tooltip */}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Desktop */}
+                <div className="hidden md:flex gap-1.5">
+
+                  {visibleWeeks.map((week, weekIndex) => (
                     <div
                       key={weekIndex}
                       className="flex flex-col gap-1.5"
