@@ -139,7 +139,7 @@ export default function AssignmentsPage() {
                 </div>
 
               <div className="mb-6">
-                <h1 className="text-5xl font-bold mb-3 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+                <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
                   My Assignments
                 </h1>
                 <p className="text-muted-foreground text-lg">

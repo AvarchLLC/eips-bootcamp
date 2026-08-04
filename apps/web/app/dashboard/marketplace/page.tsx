@@ -106,10 +106,10 @@ function MarketplaceContent() {
                 <ShoppingCart size={16} />
                 MARKETPLACE
               </div>
-              <h1 className="text-5xl font-bold mb-3 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
                 Module Marketplace
               </h1>
-              <p className="text-muted-foreground text-lg max-w-2xl">
+              <p className="text-muted-foreground text-lg max-w-1xl">
                 Browse our curated selection of Ethereum and Web3 modules. Add modules to your cart and start learning.
               </p>
             </div>
