@@ -164,7 +164,7 @@ export function Sidebar({ mobileOpen, onMobileClose, collapsed, toggleSidebar, }
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-screen bg-card border-r border-border z-50 
+        className={`fixed top-0 left-0 h-full bg-card border-r border-border z-50 
           flex flex-col 
           transition-all duration-300 ease-in-out
           ${collapsed ? 'lg:w-[72px]' : 'lg:w-[220px]'}
