@@ -5,7 +5,7 @@ import { useSession, signOut } from '@/app/lib/auth-client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ThemeToggle } from '../ThemeToggle';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { getUserTotalXp, getRecentNotifications, type AppNotification } from '@/app/actions/topbar';
 import { useDisconnect } from 'wagmi';
 
@@ -78,6 +78,27 @@ export function Topbar({ onMobileMenuOpen }: TopbarProps) {
       ).slice(0, 5)
     : [];
 
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+
+  // Detect outside clicks
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(e.target as Node)
+      ) {
+        setIsMobileSearchOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <header className="sticky top-0 z-30 h-[60px] bg-background/95 backdrop-blur-xl border-b border-border flex items-center px-4 lg:px-6 gap-4">
       {/* Mobile hamburger */}
@@ -89,7 +110,11 @@ export function Topbar({ onMobileMenuOpen }: TopbarProps) {
       </button>
 
       {/* Search */}
-      <div className="flex-1 max-w-[500px] relative">
+      <div 
+        ref={searchContainerRef}
+        className="flex-1 max-w-[500px] relative"
+        onClick={() => setIsMobileSearchOpen(true)}
+      >
         <div className="relative group">
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-emerald-400 transition-colors" />
           <input
@@ -100,9 +125,9 @@ export function Topbar({ onMobileMenuOpen }: TopbarProps) {
             onFocus={() => setIsSearchFocused(true)}
             onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
             placeholder="Search courses, modules, topics... (Press Enter)"
-            className="w-full bg-accent border border-border rounded-lg pl-9 pr-16 py-2 text-sm text-muted-foreground placeholder:text-muted-foreground focus:outline-none focus:border-emerald-500/50 focus:bg-accent focus:shadow-[0_0_15px_rgba(16,185,129,0.15)] transition-all duration-300"
+            className="w-full bg-accent border border-border rounded-lg pl-3 pr-6 p-2 lg:pl-9 lg:pr-16 lg:py-2 text-sm text-muted-foreground placeholder:text-muted-foreground focus:outline-none focus:border-emerald-500/50 focus:bg-accent focus:shadow-[0_0_15px_rgba(16,185,129,0.15)] transition-all duration-300"
           />
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-0.5 pointer-events-none">
+          <div className="hidden lg:flex absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-0.5 pointer-events-none">
             <kbd className="text-[10px] text-muted-foreground bg-accent border border-border rounded px-1.5 py-0.5 font-mono group-focus-within:border-emerald-500/30 group-focus-within:text-emerald-500/70 transition-colors">↵</kbd>
           </div>
         </div>
@@ -140,7 +165,11 @@ export function Topbar({ onMobileMenuOpen }: TopbarProps) {
         )}
       </div>
 
-      <div className="ml-auto flex items-center gap-3 relative">
+      <div className={`
+        ml-auto flex items-center gap-3 relative
+        ${isMobileSearchOpen ? "hidden lg:flex" : "flex"}
+        `}
+      >
         <ThemeToggle />
         {/* Notification bell */}
         <div className="relative">
