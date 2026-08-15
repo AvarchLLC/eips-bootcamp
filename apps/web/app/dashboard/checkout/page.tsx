@@ -59,7 +59,8 @@ export default function CheckoutPage() {
       if (res.ok) {
         setSuccess(true);
       } else {
-        alert('Failed to subscribe. You might already be subscribed.');
+        const errorData = await res.json().catch(() => ({}));
+        alert(`Failed to subscribe: ${errorData.message || 'Unknown error'}`);
       }
     } catch (e) {
       console.error(e);
@@ -166,7 +167,7 @@ export default function CheckoutPage() {
                 <div className="mt-auto">
                   <button
                     onClick={handleCheckout}
-                    disabled={processing}
+                    disabled={processing || moduleData.isSubscribed}
                     className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 disabled:bg-emerald-500/50 disabled:cursor-not-allowed text-black font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] flex justify-center items-center gap-2"
                   >
                     {processing ? (
@@ -174,6 +175,8 @@ export default function CheckoutPage() {
                         <Loader2 className="w-5 h-5 animate-spin" />
                         Processing...
                       </>
+                    ) : moduleData.isSubscribed ? (
+                      'Already Subscribed'
                     ) : (
                       'Subscribe for Free'
                     )}
@@ -198,7 +201,7 @@ export default function CheckoutPage() {
                   </p>
                   <button
                     onClick={handleCheckout}
-                    disabled={processing}
+                    disabled={processing || moduleData.isSubscribed}
                     className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 disabled:bg-emerald-500/50 disabled:cursor-not-allowed text-black font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] flex justify-center items-center gap-2"
                   >
                     {processing ? (
@@ -206,6 +209,8 @@ export default function CheckoutPage() {
                         <Loader2 className="w-5 h-5 animate-spin" />
                         Processing...
                       </>
+                    ) : moduleData.isSubscribed ? (
+                      'Already Subscribed'
                     ) : (
                       `Pay $${moduleData.price}`
                     )}

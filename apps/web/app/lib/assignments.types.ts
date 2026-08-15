@@ -20,14 +20,14 @@ export interface Assignment {
   resources?: Resource[];
 }
 
-export interface RubricItem {
+interface RubricItem {
   id: string;
   criterion: string;
   maxPoints: number;
   description: string;
 }
 
-export interface Resource {
+interface Resource {
   id: string;
   title: string;
   type: 'link' | 'document' | 'video' | 'example';
@@ -41,7 +41,7 @@ export interface AssignmentStats {
   totalXpEarned: number;
 }
 
-export interface AssignmentSubmission {
+interface AssignmentSubmission {
   id: string;
   assignmentId: string;
   userId: string;
@@ -52,7 +52,7 @@ export interface AssignmentSubmission {
   score?: number;
 }
 
-export interface AssignmentFilter {
+interface AssignmentFilter {
   status: string;
   difficulty: string;
   module: string;
@@ -60,7 +60,7 @@ export interface AssignmentFilter {
   sortBy: string;
 }
 
-export interface Feedback {
+interface Feedback {
   id: string;
   assignment: string;
   mentor: string;
@@ -69,11 +69,11 @@ export interface Feedback {
   createdAt: string;
 }
 
-export interface AssignmentCardProps {
+interface AssignmentCardProps {
   assignment: Assignment;
 }
 
-export interface AssignmentFiltersProps {
+interface AssignmentFiltersProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   statusFilter: string;
@@ -86,18 +86,18 @@ export interface AssignmentFiltersProps {
   onSortChange: (sort: string) => void;
 }
 
-export interface AssignmentStatsProps {
+interface AssignmentStatsProps {
   stats: AssignmentStats;
 }
 
-export interface DeadlineWidgetProps {
+interface DeadlineWidgetProps {
   assignments: Assignment[];
 }
 
-export interface XPProgressWidgetProps {
+interface XPProgressWidgetProps {
   stats: AssignmentStats;
 }
 
-export interface FeedbackWidgetProps {
+interface FeedbackWidgetProps {
   feedbacks?: Feedback[];
 }

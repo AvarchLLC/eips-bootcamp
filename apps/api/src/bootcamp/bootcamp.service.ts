@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -84,12 +85,17 @@ export class BootcampService {
       throw new BadRequestException('Already subscribed');
     }
 
-    return this.prisma.moduleSubscription.create({
-      data: {
-        userId,
-        moduleId,
-      },
-    });
+    try {
+      return await this.prisma.moduleSubscription.create({
+        data: {
+          userId,
+          moduleId,
+        },
+      });
+    } catch (error) {
+      console.error('Prisma Error in subscribeToModule:', error);
+      throw new InternalServerErrorException('Database Error: ' + error.message);
+    }
   }
 
   async completeLesson(userId: string, lessonId: string) {

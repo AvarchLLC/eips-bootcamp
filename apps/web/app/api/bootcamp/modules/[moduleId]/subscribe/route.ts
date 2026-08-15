@@ -35,12 +35,15 @@ export async function POST(
     });
 
     if (!res.ok) {
-      return NextResponse.json({ message: 'Failed to subscribe' }, { status: res.status });
+      const errorText = await res.text();
+      console.error('NestJS API failed:', res.status, errorText);
+      return NextResponse.json({ message: 'Failed to subscribe', error: errorText }, { status: res.status });
     }
 
     const data = await res.json();
     return NextResponse.json(data);
   } catch (err) {
+    console.error('Next.js API exception:', err);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }
