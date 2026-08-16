@@ -25,8 +25,11 @@ export async function POST(
 
   
 
+  // Hardcoded to local backend for debugging to ensure we don't hit the production API
+  const LOCAL_API_BASE = 'http://127.0.0.1:4000';
+
   try {
-    const res = await fetch(`${API_BASE}/bootcamp/modules/${resolvedParams.moduleId}/subscribe`, {
+    const res = await fetch(`${LOCAL_API_BASE}/bootcamp/modules/${resolvedParams.moduleId}/subscribe`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',

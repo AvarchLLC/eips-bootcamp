@@ -72,20 +72,21 @@ export class BootcampService {
   }
 
   async subscribeToModule(userId: string, moduleId: string) {
-    const module = await this.prisma.module.findUnique({
-      where: { id: moduleId },
-    });
-    if (!module) throw new NotFoundException('Module not found');
-
-    const existing = await this.prisma.moduleSubscription.findUnique({
-      where: { userId_moduleId: { userId, moduleId } },
-    });
-
-    if (existing) {
-      throw new BadRequestException('Already subscribed');
-    }
-
+    console.log('NestJS Database URL:', process.env.DATABASE_URL);
     try {
+      const module = await this.prisma.module.findUnique({
+        where: { id: moduleId },
+      });
+      if (!module) throw new NotFoundException('Module not found');
+
+      const existing = await this.prisma.moduleSubscription.findUnique({
+        where: { userId_moduleId: { userId, moduleId } },
+      });
+
+      if (existing) {
+        throw new BadRequestException('Already subscribed');
+      }
+
       return await this.prisma.moduleSubscription.create({
         data: {
           userId,
@@ -93,8 +94,11 @@ export class BootcampService {
         },
       });
     } catch (error) {
-      console.error('Prisma Error in subscribeToModule:', error);
-      throw new InternalServerErrorException('Database Error: ' + error.message);
+      console.error('Error in subscribeToModule:', error);
+      if (error instanceof NotFoundException || error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Detailed Error: ' + error.message);
     }
   }
 

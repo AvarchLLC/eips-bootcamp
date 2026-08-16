@@ -9,6 +9,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { BootcampService } from './bootcamp.service';
+import { SubscribeDto } from './dto/subscribe.dto';
 
 @Controller('bootcamp')
 export class BootcampController {
@@ -27,26 +28,26 @@ export class BootcampController {
   @Post('modules/:moduleId/subscribe')
   async subscribeToModule(
     @Param('moduleId') moduleId: string,
-    @Body('userId') userId: string,
+    @Body() body: SubscribeDto,
   ) {
     console.log('--- subscribeToModule ---');
     console.log('moduleId:', moduleId);
-    console.log('userId:', userId);
-    if (!userId) {
+    console.log('userId:', body.userId);
+    if (!body.userId) {
       throw new NotFoundException('User ID is required');
     }
-    return this.bootcampService.subscribeToModule(userId, moduleId);
+    return this.bootcampService.subscribeToModule(body.userId, moduleId);
   }
 
   @Post('modules/:lessonId/complete')
   async completeLesson(
     @Param('lessonId') lessonId: string,
-    @Body('userId') userId: string,
+    @Body() body: SubscribeDto,
   ) {
-    if (!userId) {
+    if (!body.userId) {
       throw new NotFoundException('User ID is required');
     }
-    return this.bootcampService.completeLesson(userId, lessonId);
+    return this.bootcampService.completeLesson(body.userId, lessonId);
   }
 
   @Post('modules')
