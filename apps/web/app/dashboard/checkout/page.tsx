@@ -60,7 +60,7 @@ export default function CheckoutPage() {
         setSuccess(true);
       } else {
         const errorData = await res.json().catch(() => ({}));
-        alert(`Failed to subscribe: ${errorData.message || 'Unknown error'}`);
+        alert(`Error: ${errorData.error || errorData.message || 'Unknown error'}`);
       }
     } catch (e) {
       console.error(e);

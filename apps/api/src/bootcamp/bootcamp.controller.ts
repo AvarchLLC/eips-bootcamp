@@ -29,6 +29,9 @@ export class BootcampController {
     @Param('moduleId') moduleId: string,
     @Body('userId') userId: string,
   ) {
+    console.log('--- subscribeToModule ---');
+    console.log('moduleId:', moduleId);
+    console.log('userId:', userId);
     if (!userId) {
       throw new NotFoundException('User ID is required');
     }
