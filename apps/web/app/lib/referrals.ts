@@ -38,9 +38,9 @@ export interface LeaderboardEntry {
   rank: number;
 }
 
-export async function resolveDbUser(clerkId: string): Promise<{ id: string } | null> {
+export async function resolveDbUser(userId: string): Promise<{ id: string } | null> {
   const user = await prisma.user.findFirst({
-    where: { id: clerkId }
+    where: { id: userId }
   });
   return user ? { id: user.id } : null;
 }
@@ -95,10 +95,10 @@ export async function fetchLeaderboard(): Promise<LeaderboardEntry[] | null> {
     });
     
     return xpGroups.map((group, i) => {
-      const u = users.find(u => u.id === group.userId)!;
+      const u = users.find(u => u.id === group.userId);
       return {
-        userId: u.id,
-        name: u.name || 'Unknown User',
+        userId: group.userId,
+        name: u?.name || 'Unknown User',
         referrals: 0, // Requires complex grouping to get exact referral count per user on leaderboard
         xp: group._sum.amount || 0,
         rank: i + 1
@@ -135,20 +135,22 @@ export async function fetchReferralActivity(userId: string): Promise<ReferralAct
 }
 
 export async function generateReferralCode(userId: string): Promise<{ code: string } | null> {
-  try {
-    const randomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-    const newCode = await prisma.referralCode.create({
-      data: {
-        code: randomCode,
-        userId: userId,
-        clicks: 0
-      }
-    });
-    return { code: newCode.code };
-  } catch (e) {
-    console.error("Failed to generate code:", e);
-    return null;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    try {
+      const randomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const newCode = await prisma.referralCode.create({
+        data: {
+          code: randomCode,
+          userId: userId,
+          clicks: 0
+        }
+      });
+      return { code: newCode.code };
+    } catch (e) {
+      // Retry on unique constraint collision
+    }
   }
+  return null;
 }
 
 export function createEmptyReferralStats(): ReferralStats {

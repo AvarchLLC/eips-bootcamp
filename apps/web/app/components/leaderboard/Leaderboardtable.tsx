@@ -33,7 +33,7 @@ export default function LeaderboardTable({ users }: Props) {
               <td className="px-4 py-3 align-middle">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-800">
-                    {u.avatarUrl ? <img src={u.avatarUrl} alt={u.name} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-xs">{u.name[0]}</div>}
+                    {u.avatarUrl ? <img src={u.avatarUrl} alt={u.name || 'User'} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-xs">{(u.name && u.name[0]) ? u.name[0] : 'U'}</div>}
                   </div>
                   <div>
                     <div className="flex items-center gap-2">

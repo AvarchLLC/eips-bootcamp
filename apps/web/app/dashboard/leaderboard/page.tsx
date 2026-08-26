@@ -70,9 +70,9 @@ export default function LeaderboardPage() {
 
   // ── Rank progress ───────────────────────────────────────────────────────────
   const currentUserRow = rowsWithCurrent.find((r) => r.isCurrentUser);
-  const percentile = currentUserRow
+  const percentile = (currentUserRow && leaderboard.length > 0)
     ? Math.round((currentUserRow.rank / leaderboard.length) * 100)
-    : 12;
+    : 100;
 
   return (
     <DashboardShell>

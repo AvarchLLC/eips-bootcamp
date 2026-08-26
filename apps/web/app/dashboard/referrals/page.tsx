@@ -1,5 +1,5 @@
 import { auth } from '@/app/lib/auth';
-import { headers } from 'next/headers';;
+import { headers } from 'next/headers';
 import {
   resolveDbUser,
   fetchReferralStats,
@@ -28,11 +28,11 @@ export const metadata = {
 async function getReferralData(): Promise<{ stats: ReferralStats; activity: ReferralActivityType[] }> {
   const empty = { stats: createEmptyReferralStats(), activity: [] };
   try {
-      const session = await auth.api.getSession({ headers: await headers() });
-  const clerkId = session?.user?.id;
-    if (!clerkId) return empty;
+    const session = await auth.api.getSession({ headers: await headers() });
+    const userId = session?.user?.id;
+    if (!userId) return empty;
 
-    const dbUser = await resolveDbUser(clerkId);
+    const dbUser = await resolveDbUser(userId);
     if (!dbUser) return empty;
 
     let stats = await fetchReferralStats(dbUser.id);
