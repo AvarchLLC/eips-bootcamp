@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 import {
   ChevronLeft,
   Check,
@@ -412,7 +413,7 @@ function LessonContent({ lesson, moduleTitle, onLessonComplete }: { lesson: Less
               )}
             </button>
             <button 
-              onClick={() => alert('Progress is automatically saved as you watch!')}
+              onClick={() => toast.info('Progress is automatically saved as you watch!')}
               className="px-6 py-4 bg-accent hover:bg-gray-800 border border-border text-foreground font-semibold rounded-xl transition-all flex items-center gap-2"
             >
               <Clock size={18} />

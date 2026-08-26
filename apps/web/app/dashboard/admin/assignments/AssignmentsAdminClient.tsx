@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Plus, FileText, Calendar, Tag as TagIcon, Signal, Trash2, AlertTriangle, Download } from "lucide-react";
 import { createAssignment, deleteAssignment, editAssignment } from "./actions";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function AssignmentsAdminClient({ initialAssignments }: { initialAssignments: any[] }) {
   const router = useRouter();
@@ -53,9 +54,10 @@ export default function AssignmentsAdminClient({ initialAssignments }: { initial
 
       setIsCreating(false);
       router.refresh();
+      toast.success("Assignment created successfully!");
     } catch (err) {
       console.error(err);
-      alert("Error creating assignment");
+      toast.error("Error creating assignment");
     } finally {
       setLoading(false);
     }
@@ -67,6 +69,7 @@ export default function AssignmentsAdminClient({ initialAssignments }: { initial
     await deleteAssignment(deletingAssignment.id);
     setLoading(false);
     setDeletingAssignment(null);
+    toast.success("Assignment deleted!");
     router.refresh();
   }
 
@@ -97,9 +100,10 @@ export default function AssignmentsAdminClient({ initialAssignments }: { initial
 
       setEditingAssignment(null);
       router.refresh();
+      toast.success("Assignment updated!");
     } catch (err) {
       console.error(err);
-      alert("Error saving assignment");
+      toast.error("Error saving assignment");
     } finally {
       setLoading(false);
     }

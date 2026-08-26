@@ -6,6 +6,7 @@ import { useSession } from '@/app/lib/auth-client';
 import { DashboardShell } from '@/app/components/dashboard/DashboardShell';
 import { CreditCard, CheckCircle2, ShoppingCart, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 function CheckoutContent() {
   const { data: session } = useSession();
@@ -60,11 +61,11 @@ function CheckoutContent() {
         setSuccess(true);
       } else {
         const errorData = await res.json().catch(() => ({}));
-        alert(`Error: ${errorData.error || errorData.message || 'Unknown error'}`);
+        toast.error(`Error: ${errorData.error || errorData.message || 'Unknown error'}`);
       }
     } catch (e) {
       console.error(e);
-      alert('An error occurred during checkout.');
+      toast.error('An error occurred during checkout.');
     } finally {
       setProcessing(false);
     }

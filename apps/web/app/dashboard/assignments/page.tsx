@@ -13,6 +13,7 @@ import { mockStats } from '@/app/lib/assignments-data';
 import { Assignment } from '@/app/lib/assignments.types';
 import Link from 'next/link';
 import { useSession } from '@/app/lib/auth-client';
+import { toast } from 'sonner';
 
 export default function AssignmentsPage() {
   const { data: session } = useSession();
@@ -66,7 +67,7 @@ export default function AssignmentsPage() {
           const uploadData = await uploadRes.json();
           contentUrl = uploadData.fileUrl;
         } else {
-          alert("Failed to upload assignment file");
+          toast.error("Failed to upload assignment file");
           return;
         }
       }
@@ -78,13 +79,13 @@ export default function AssignmentsPage() {
       });
       if (res.ok) {
         await fetchAssignments(); // refresh data
-        alert("Assignment submitted successfully!");
+        toast.success("Assignment submitted successfully!");
       } else {
-        alert("Failed to submit assignment");
+        toast.error("Failed to submit assignment");
       }
     } catch (e) {
       console.error(e);
-      alert("An error occurred during submission");
+      toast.error("An error occurred during submission");
     }
   };
 
@@ -110,8 +111,8 @@ export default function AssignmentsPage() {
       case 'difficulty':
         const difficultyOrder = { Beginner: 1, Intermediate: 2, Advanced: 3 };
         return (
-          difficultyOrder[a.difficulty as keyof typeof difficultyOrder] -
-          difficultyOrder[b.difficulty as keyof typeof difficultyOrder]
+          (difficultyOrder[a.difficulty as keyof typeof difficultyOrder] || 0) -
+          (difficultyOrder[b.difficulty as keyof typeof difficultyOrder] || 0)
         );
       case 'xp-high':
         return b.xpReward - a.xpReward;

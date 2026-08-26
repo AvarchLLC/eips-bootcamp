@@ -105,7 +105,7 @@ export default function ProfilePage() {
           twitter,
           github,
           linkedin,
-          walletAddress: address || null,
+          walletAddress: address ?? (user as any)?.walletAddress ?? null,
         }),
       });
       

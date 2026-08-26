@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useSession } from '@/app/lib/auth-client';
 import { CAPFormData, submitCAPApplication, CAPApplication } from "../../lib/Cap";
 import { ChevronRight, ChevronLeft, Zap, Users, GraduationCap, CheckCircle2, Trophy } from "lucide-react";
+import { toast } from "sonner";
 
 interface Props {
   onSubmitted: (app: CAPApplication) => void;
@@ -86,7 +87,10 @@ export default function CapApplicationForm({ onSubmitted }: Props) {
         username: (user as any).username || '',
       });
       onSubmitted(app);
-    } catch {
+      toast.success("Application submitted successfully!");
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err?.message || "Failed to submit application. Please try again.");
       setSubmitting(false);
     }
   };
