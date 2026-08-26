@@ -1,9 +1,7 @@
 import { auth } from '@/app/lib/auth';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://143.244.213.59:4003';
-
+import { getApiBaseUrl, getInternalApiKey } from '@/app/lib/api';
 
 export async function POST(
   request: Request,
@@ -28,11 +26,11 @@ export async function POST(
       return NextResponse.json({ message: 'Unauthorized. Please sign in.' }, { status: 401 });
     }
 
-    const res = await fetch(`${API_BASE}/bootcamp/modules/${resolvedParams.moduleId}/subscribe`, {
+    const res = await fetch(`${getApiBaseUrl()}/bootcamp/modules/${resolvedParams.moduleId}/subscribe`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
-        'x-api-key': process.env.INTERNAL_API_KEY || 'dev-secret-key'
+        'x-api-key': getInternalApiKey()
       },
       body: JSON.stringify({ userId: userId })
     });

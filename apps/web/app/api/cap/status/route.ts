@@ -1,8 +1,7 @@
 import { auth } from '@/app/lib/auth';
-import { headers } from 'next/headers';;
+import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://143.244.213.59:4003';
+import { getApiBaseUrl, getInternalApiKey } from '@/app/lib/api';
 
 type BackendCAPApplication = {
   createdAt?: string;
@@ -33,7 +32,6 @@ function normalizeApplication(application: BackendCAPApplication) {
   };
 }
 
-
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const userId = url.searchParams.get('userId');
@@ -53,9 +51,9 @@ export async function GET(request: Request) {
   }
 
   try {
-    const res = await fetch(`${API_BASE}/cap/status/${userId}`, {
+    const res = await fetch(`${getApiBaseUrl()}/cap/status/${userId}`, {
       cache: 'no-store',
-      headers: { 'x-api-key': process.env.INTERNAL_API_KEY || 'dev-secret-key'},
+      headers: { 'x-api-key': getInternalApiKey() },
     });
 
     if (!res.ok) {

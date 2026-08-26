@@ -1,9 +1,7 @@
 import { auth } from '@/app/lib/auth';
-import { headers } from 'next/headers';;
+import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://143.244.213.59:4003';
-
+import { getApiBaseUrl, getInternalApiKey } from '@/app/lib/api';
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -19,12 +17,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
 
-  
-
   try {
-    const res = await fetch(`${API_BASE}/bootcamp/modules/${lessonId}/complete`, {
+    const res = await fetch(`${getApiBaseUrl()}/bootcamp/modules/${lessonId}/complete`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': process.env.INTERNAL_API_KEY || 'dev-secret-key'},
+      headers: { 'Content-Type': 'application/json', 'x-api-key': getInternalApiKey() },
       body: JSON.stringify({ userId: userId }),
     });
 

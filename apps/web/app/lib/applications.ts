@@ -1,3 +1,5 @@
+import { getApiBaseUrl } from '@/app/lib/api';
+
 // Types and interfaces for Applications Management
 
 export interface Application {
@@ -52,12 +54,10 @@ export interface CountryStats {
   count: number;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://143.244.213.59:4003';
-
 // API Integration
 export async function fetchApplications(): Promise<Application[]> {
   try {
-    const response = await fetch(`${API_BASE}/cap/applications`, {
+    const response = await fetch(`${getApiBaseUrl()}/cap/applications`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     });

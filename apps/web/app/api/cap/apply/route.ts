@@ -1,8 +1,7 @@
 import { auth } from '@/app/lib/auth';
-import { headers } from 'next/headers';;
+import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://143.244.213.59:4003';
+import { getApiBaseUrl, getInternalApiKey } from '@/app/lib/api';
 
 function formatDate(dateInput: string | Date) {
   return new Intl.DateTimeFormat('en-US', {
@@ -26,9 +25,6 @@ function normalizeApplication(application: { createdAt?: string; [key: string]: 
     expectedResponse: formatDate(addDays(appliedAt, 7)),
   };
 }
-
-
-
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -56,21 +52,25 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: 'User not found' }, { status: 404 });
   }
 
-  const existing = await fetch(`${API_BASE}/cap/status/${resolvedUser.id}`, {
+  const existing = await fetch(`${getApiBaseUrl()}/cap/status/${resolvedUser.id}`, {
     cache: 'no-store',
-      headers: { 'x-api-key': process.env.INTERNAL_API_KEY || 'dev-secret-key'},
+    headers: { 'x-api-key': getInternalApiKey() },
   });
 
   if (existing.ok) {
     const existingText = await existing.text();
     if (existingText.trim().length > 0) {
-      return NextResponse.json(normalizeApplication(JSON.parse(existingText)));
+      try {
+        return NextResponse.json(normalizeApplication(JSON.parse(existingText)));
+      } catch (e) {
+        console.error('Error parsing existing application JSON:', e);
+      }
     }
   }
 
-  const res = await fetch(`${API_BASE}/cap/apply`, {
+  const res = await fetch(`${getApiBaseUrl()}/cap/apply`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-api-key': process.env.INTERNAL_API_KEY || 'dev-secret-key'},
+    headers: { 'Content-Type': 'application/json', 'x-api-key': getInternalApiKey() },
     body: JSON.stringify({
       userId: resolvedUser.id,
       graduationYear: Number(graduationYear),
