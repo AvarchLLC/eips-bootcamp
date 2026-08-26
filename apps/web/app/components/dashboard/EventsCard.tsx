@@ -4,6 +4,7 @@
 import { Clock, Calendar } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { getUpcomingDeadlines } from '@/app/actions/dashboard';
+import Link from 'next/link';
 
 export function EventsCard() {
   const [deadlines, setDeadlines] = useState<any[]>([]);
@@ -20,9 +21,9 @@ export function EventsCard() {
     <div className="bg-card border border-border rounded-2xl p-5 flex flex-col h-full">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-foreground font-bold text-base">Upcoming Deadlines</h3>
-        <button className="text-emerald-400 text-xs font-semibold hover:text-emerald-300 transition-colors">
+        <Link href="/dashboard/assignments" className="text-emerald-400 text-xs font-semibold hover:text-emerald-300 transition-colors">
           View All
-        </button>
+        </Link>
       </div>
 
       <div className="flex-1 flex flex-col justify-center">

@@ -1,24 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { ReferralStats } from "../../lib/referrals";
+import { ReferralStats, createEmptyReferralStats } from "../../lib/referrals";
 
 interface Props {
   stats: ReferralStats;
 }
 
 export default function ReferralCodeCard({ stats }: Props) {
+  const s = stats || createEmptyReferralStats();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(stats.referralLink);
+    navigator.clipboard.writeText(s.referralLink);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   const handleShare = () => {
     if (navigator.share) {
-      navigator.share({ title: "Join ETHShala", url: stats.referralLink });
+      navigator.share({ title: "Join ETHShala", url: s.referralLink });
     } else {
       handleCopy();
     }
@@ -46,7 +47,7 @@ export default function ReferralCodeCard({ stats }: Props) {
                 fontFamily: "monospace",
               }}
             >
-              {stats.referralCode}
+              {s.referralCode || '──────'}
             </span>
             <button
               onClick={handleCopy}
@@ -113,11 +114,11 @@ export default function ReferralCodeCard({ stats }: Props) {
         <div className="p-6 md:p-8 flex flex-col justify-center gap-5 border-t md:border-t-0 md:border-l border-white/[0.06]">
           <div>
             <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest mb-1">Total Clicks</p>
-            <p className="text-3xl font-bold text-foreground">{stats.totalClicks}</p>
+            <p className="text-3xl font-bold text-foreground">{s.totalClicks}</p>
           </div>
           <div>
             <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest mb-1">Successful Referrals</p>
-            <p className="text-3xl font-bold text-foreground">{stats.successfulSignups}</p>
+            <p className="text-3xl font-bold text-foreground">{s.successfulSignups}</p>
           </div>
           <div>
             <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest mb-1">XP Earned</p>
@@ -128,7 +129,7 @@ export default function ReferralCodeCard({ stats }: Props) {
                 textShadow: "0 0 20px rgba(16,185,129,0.5)",
               }}
             >
-              {stats.xpEarned.toLocaleString()} XP
+              {s.xpEarned.toLocaleString()} XP
             </p>
           </div>
         </div>

@@ -35,7 +35,7 @@ export function ActivityFeed({ activities }: { activities: ActivityItem[] }) {
       <ul className="space-y-3.5">
         {activities.length > 0 ? (
           activities.map((item) => {
-          const { icon, bg } = iconConfig[item.icon];
+          const { icon, bg } = iconConfig[item.icon] || iconConfig['xp'];
           return (
             <li key={item.id} className="flex items-start gap-3">
               <div className={`w-8 h-8 rounded-full border flex items-center justify-center flex-shrink-0 mt-0.5 ${bg}`}>

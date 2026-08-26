@@ -75,7 +75,7 @@ export function AssignmentCard({ assignment, onSubmit }: AssignmentCardProps) {
     (new Date(assignment.deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
   );
 
-  const statusConfig_ = statusConfig[assignment.status];
+  const statusConfig_ = statusConfig[assignment.status] || statusConfig['Not Started'];
 
   const getActionButton = () => {
     switch (assignment.status) {
@@ -126,7 +126,7 @@ export function AssignmentCard({ assignment, onSubmit }: AssignmentCardProps) {
             <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">
               {assignment.module}
             </span>
-            <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${difficultyConfig[assignment.difficulty]}`}>
+            <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${difficultyConfig[assignment.difficulty] || difficultyConfig['Beginner']}`}>
               {assignment.difficulty}
             </span>
           </div>
@@ -209,7 +209,7 @@ export function AssignmentCard({ assignment, onSubmit }: AssignmentCardProps) {
           type="file" 
           ref={fileInputRef} 
           className="hidden" 
-          accept=".pdf" 
+          accept=".pdf,.doc,.docx,.zip,.png,.jpg,.jpeg" 
           onChange={handleFileChange}
         />
         <button 

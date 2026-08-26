@@ -22,7 +22,7 @@ export const RewardsGrid: React.FC<RewardsGridProps> = ({
   onRedeem,
 }) => {
   const filteredAndSorted = useMemo(() => {
-    let filtered = rewards;
+    let filtered = rewards || [];
 
     // Filter by category
     if (activeCategory !== 'All Rewards') {
