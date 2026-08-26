@@ -29,12 +29,17 @@ import { http } from 'wagmi';
 
 const config = getDefaultConfig({
   appName: 'ETHShala',
-  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'c03554e26fbbf209dc9bd4f49488e0db', // Replace with your actual WalletConnect project ID from cloud.walletconnect.com
+  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'c03554e26fbbf209dc9bd4f49488e0db',
   chains: [mainnet, polygon, optimism, arbitrum, base, sepolia],
   transports: {
     [mainnet.id]: http('https://cloudflare-eth.com'),
+    [polygon.id]: http(),
+    [optimism.id]: http(),
+    [arbitrum.id]: http(),
+    [base.id]: http(),
+    [sepolia.id]: http(),
   },
-  ssr: false, // Next.js SSR compatibility disabled to prevent context issues
+  ssr: true,
 });
 
 export function Web3Provider({ children }: { children: React.ReactNode }) {
