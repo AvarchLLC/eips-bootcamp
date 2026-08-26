@@ -78,11 +78,17 @@ export class BootcampService {
       });
       if (!module) throw new NotFoundException('Module not found');
 
-      const user = await this.prisma.user.findUnique({
+      let user = await this.prisma.user.findUnique({
         where: { id: userId },
       });
       if (!user) {
-        throw new NotFoundException('User account not found in database. Please sign out and sign in again to sync your account.');
+        user = await this.prisma.user.create({
+          data: {
+            id: userId,
+            email: `${userId}@placeholder.ethshala.com`,
+            name: 'Learner',
+          },
+        });
       }
 
       const existing = await this.prisma.moduleSubscription.findUnique({
