@@ -33,12 +33,10 @@ export const dynamic = 'force-dynamic';
 export default async function AdminDashboardPage() {
     
   // Verify admin role
-  // Comment the below snippet and visit /dashboard/admin/analytics
-  // const isAdmin = await verifyAdminRole();
-  
-  //  if (!isAdmin) {
-  //    redirect('/dashboard');
-  //  }
+  const isAdmin = await verifyAdminRole();
+  if (!isAdmin) {
+    redirect('/dashboard');
+  }
 
   // Fetch all data (with fallback to mock data)
   const [

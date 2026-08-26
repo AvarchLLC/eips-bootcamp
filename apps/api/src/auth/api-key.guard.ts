@@ -12,9 +12,18 @@ export class ApiKeyGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const apiKey = request.headers['x-api-key'];
 
-    const validApiKey = process.env.INTERNAL_API_KEY || 'dev-secret-key';
+    const isProd = process.env.NODE_ENV === 'production';
+    const validApiKey = process.env.INTERNAL_API_KEY;
 
-    if (!apiKey || apiKey !== validApiKey) {
+    if (isProd && !validApiKey) {
+      throw new UnauthorizedException(
+        'Server configuration error: Internal API key not set',
+      );
+    }
+
+    const expectedKey = validApiKey || 'dev-secret-key';
+
+    if (!apiKey || apiKey !== expectedKey) {
       throw new UnauthorizedException('Invalid API Key');
     }
 

@@ -1,14 +1,13 @@
 import { auth } from '@/app/lib/auth';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || process.env.NEXT_PUBLIC_API_BASE || "http://143.244.213.59:4003";
+import { getApiBaseUrl, getInternalApiKey } from '@/app/lib/api';
 
 const ALLOWED_PREFIXES = [
   '/referrals/leaderboard/all',
   '/cap/analytics/admin',
   '/cap/status/',
-  '/users/clerk/',
+  '/users/',
 ];
 
 export async function GET(request: Request) {
@@ -27,9 +26,17 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Forbidden path' }, { status: 403 });
   }
 
+  // Admin path check
+  if (path.includes('/admin')) {
+    const userRole = (session.user as any).role;
+    if (userRole !== 'ADMIN' && userRole !== 'admin') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+  }
+
   try {
-    const res = await fetch(`${API_BASE}${path}`, {
-      headers: { 'x-api-key': process.env.INTERNAL_API_KEY || 'dev-secret-key' },
+    const res = await fetch(`${getApiBaseUrl()}${path}`, {
+      headers: { 'x-api-key': getInternalApiKey() },
       cache: 'no-store',
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);

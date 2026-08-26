@@ -7,7 +7,7 @@ import { DashboardShell } from '@/app/components/dashboard/DashboardShell';
 import { CreditCard, CheckCircle2, ShoppingCart, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const { data: session } = useSession();
   const user = session?.user;
   const router = useRouter();
@@ -222,5 +222,13 @@ export default function CheckoutPage() {
         </div>
       </div>
     </DashboardShell>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <React.Suspense fallback={<DashboardShell><div className="flex-1 flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-emerald-400" /></div></DashboardShell>}>
+      <CheckoutContent />
+    </React.Suspense>
   );
 }

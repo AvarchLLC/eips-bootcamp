@@ -3,7 +3,6 @@ import { apiFetch } from './api';
 export type User = {
   id: string;
   email: string;
-  clerkId: string;
   username: string;
   name?: string;
   role: string;
@@ -51,18 +50,17 @@ export type DashboardData = {
   recentActivity: ActivityItem[];
 };
 
-function createFallbackDashboardData(clerkId: string): DashboardData {
+function createFallbackDashboardData(userId: string): DashboardData {
   return {
     user: {
-      id: clerkId,
+      id: userId,
       email: '',
-      clerkId,
       username: 'Explorer',
       role: 'Student',
     },
     xp: 0,
     referralsCount: 0,
-    referralCode: clerkId.slice(-6).toUpperCase(),
+    referralCode: userId.slice(-6).toUpperCase(),
     capStatus: 'NOT APPLIED',
     rank: null,
     leaderboard: [],
@@ -70,12 +68,12 @@ function createFallbackDashboardData(clerkId: string): DashboardData {
   };
 }
 
-export async function getDashboardData(clerkId: string) {
+export async function getDashboardData(userId: string) {
   try {
-    const user = await apiFetch<User>(`/users/clerk/${clerkId}`);
+    const user = await apiFetch<User>(`/users/${userId}`);
 
     if (!user?.id) {
-      return createFallbackDashboardData(clerkId);
+      return createFallbackDashboardData(userId);
     }
 
     const leaderboard = await apiFetch<LeaderboardEntry[]>(`/referrals/leaderboard/all`);
@@ -128,6 +126,6 @@ export async function getDashboardData(clerkId: string) {
       recentActivity,
     };
   } catch {
-    return createFallbackDashboardData(clerkId);
+    return createFallbackDashboardData(userId);
   }
 }

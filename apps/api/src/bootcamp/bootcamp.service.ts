@@ -107,87 +107,92 @@ export class BootcampService {
       });
     } catch (error) {
       console.error('Error in subscribeToModule:', error);
-      if (error instanceof NotFoundException || error instanceof BadRequestException) {
+      if (
+        error instanceof NotFoundException ||
+        error instanceof BadRequestException
+      ) {
         throw error;
       }
-      throw new InternalServerErrorException('Detailed Error: ' + error.message);
+      throw new InternalServerErrorException('Failed to subscribe to module');
     }
   }
 
   async completeLesson(userId: string, lessonId: string) {
-    // Check if already completed
-    const existing = await this.prisma.lessonProgress.findUnique({
-      where: {
-        userId_lessonId: { userId, lessonId },
-      },
-    });
-
-    if (existing) {
-      throw new BadRequestException('Lesson already completed');
-    }
-
-    const lesson = await this.prisma.lesson.findUnique({
-      where: { id: lessonId },
-      include: { module: true },
-    });
-
-    if (!lesson) {
-      throw new NotFoundException('Lesson not found');
-    }
-
-    // Mark completed
-    const progress = await this.prisma.lessonProgress.create({
-      data: {
-        userId,
-        lessonId,
-      },
-    });
-
-    // Award piecemeal XP: 50 XP per lesson
-    const lessonXP = 50;
-    await this.prisma.xPTransaction.create({
-      data: {
-        userId,
-        amount: lessonXP,
-        reason: `Completed Lesson: ${lesson.title}`,
-      },
-    });
-
-    // Check if entire module is completed
-    const allModuleLessons = await this.prisma.lesson.findMany({
-      where: { moduleId: lesson.moduleId },
-    });
-
-    const completedModuleLessons = await this.prisma.lessonProgress.count({
-      where: {
-        userId,
-        lessonId: { in: allModuleLessons.map((l) => l.id) },
-      },
-    });
-
-    let moduleCompleted = false;
-    let awardedModuleXP = 0;
-
-    if (completedModuleLessons === allModuleLessons.length) {
-      // Entire module completed, award the module XP bonus
-      awardedModuleXP = lesson.module.xpReward;
-      moduleCompleted = true;
-      await this.prisma.xPTransaction.create({
-        data: {
-          userId,
-          amount: awardedModuleXP,
-          reason: `Completed Module: ${lesson.module.title}`,
+    return this.prisma.$transaction(async (tx) => {
+      // Check if already completed
+      const existing = await tx.lessonProgress.findUnique({
+        where: {
+          userId_lessonId: { userId, lessonId },
         },
       });
-    }
 
-    return {
-      success: true,
-      lessonXP,
-      awardedModuleXP,
-      moduleCompleted,
-      progress,
-    };
+      if (existing) {
+        throw new BadRequestException('Lesson already completed');
+      }
+
+      const lesson = await tx.lesson.findUnique({
+        where: { id: lessonId },
+        include: { module: true },
+      });
+
+      if (!lesson) {
+        throw new NotFoundException('Lesson not found');
+      }
+
+      // Mark completed
+      const progress = await tx.lessonProgress.create({
+        data: {
+          userId,
+          lessonId,
+        },
+      });
+
+      // Award piecemeal XP: 50 XP per lesson
+      const lessonXP = 50;
+      await tx.xPTransaction.create({
+        data: {
+          userId,
+          amount: lessonXP,
+          reason: `Completed Lesson: ${lesson.title}`,
+        },
+      });
+
+      // Check if entire module is completed
+      const allModuleLessons = await tx.lesson.findMany({
+        where: { moduleId: lesson.moduleId },
+      });
+
+      const completedModuleLessons = await tx.lessonProgress.count({
+        where: {
+          userId,
+          lessonId: { in: allModuleLessons.map((l) => l.id) },
+        },
+      });
+
+      let moduleCompleted = false;
+      let awardedModuleXP = 0;
+
+      if (completedModuleLessons === allModuleLessons.length) {
+        // Entire module completed, award the module XP bonus
+        awardedModuleXP = lesson.module.xpReward;
+        moduleCompleted = true;
+        await tx.xPTransaction.create({
+          data: {
+            userId,
+            amount: awardedModuleXP,
+            reason: `Completed Module: ${lesson.module.title}`,
+          },
+        });
+      }
+
+      return {
+        success: true,
+        lessonXP,
+        awardedModuleXP,
+        moduleCompleted,
+        progress,
+      };
+    });
   }
 
   async createModule(data: any) {

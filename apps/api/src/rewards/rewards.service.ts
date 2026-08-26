@@ -17,16 +17,15 @@ export class RewardsService {
       orderBy: { redeemedAt: 'desc' },
     });
 
-    const xpTransactions = await this.prisma.xPTransaction.findMany({
-      where: { userId },
-    });
+    const xpData = await this.xpService.getUserXp(userId);
+    const xpTransactions = xpData.transactions;
 
     const totalXPEarned = xpTransactions
       .filter((t) => t.amount > 0)
       .reduce((acc, t) => acc + t.amount, 0);
 
     const xpSpent = history.reduce((acc, h) => acc + h.xpSpent, 0);
-    const currentXP = totalXPEarned - xpSpent;
+    const currentXP = xpData.totalXp;
 
     // We can define next unlocks at intervals of 1000 for display
     const nextRewardUnlock = (Math.floor(totalXPEarned / 1000) + 1) * 1000;
@@ -57,36 +56,48 @@ export class RewardsService {
   }
 
   async redeemReward(userId: string, rewardId: string) {
-    const reward = await this.prisma.reward.findUnique({
-      where: { id: rewardId },
+    return this.prisma.$transaction(async (tx) => {
+      const reward = await tx.reward.findUnique({
+        where: { id: rewardId },
+      });
+
+      if (!reward || !reward.available) {
+        throw new BadRequestException('Reward not available');
+      }
+
+      const aggregate = await tx.xPTransaction.aggregate({
+        where: { userId },
+        _sum: { amount: true },
+      });
+      const currentXP = aggregate._sum.amount ?? 0;
+
+      if (currentXP < reward.cost) {
+        throw new BadRequestException('Not enough XP to redeem this reward');
+      }
+
+      // Process redemption
+      const redemption = await tx.rewardRedemption.create({
+        data: {
+          userId,
+          rewardId,
+          xpSpent: reward.cost,
+        },
+      });
+
+      // Deduct XP via transaction log
+      await tx.xPTransaction.create({
+        data: {
+          userId,
+          amount: -reward.cost,
+          reason: `Redeemed ${reward.title}`,
+        },
+      });
+
+      return {
+        success: true,
+        message: 'Reward redeemed successfully!',
+        redemption,
+      };
     });
-
-    if (!reward || !reward.available) {
-      throw new BadRequestException('Reward not available');
-    }
-
-    const { userData } = await this.getRewardsData(userId);
-
-    if (userData.currentXP < reward.cost) {
-      throw new BadRequestException('Not enough XP to redeem this reward');
-    }
-
-    // Process redemption
-    await this.prisma.rewardRedemption.create({
-      data: {
-        userId,
-        rewardId,
-        xpSpent: reward.cost,
-      },
-    });
-
-    // Deduct XP via transaction
-    await this.xpService.awardXp({
-      userId,
-      amount: -reward.cost,
-      reason: `Redeemed ${reward.title}`,
-    });
-
-    return { success: true, message: 'Reward redeemed successfully!' };
   }
 }

@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { useSession } from '@/app/lib/auth-client';
 import { useSearchParams } from 'next/navigation';
 
-export default function MyModulesPage() {
+function MyModulesContent() {
   const { data: session } = useSession();
   const user = session?.user;
   const searchParams = useSearchParams();
@@ -163,5 +163,13 @@ export default function MyModulesPage() {
         </div>
       </div>
     </DashboardShell>
+  );
+}
+
+export default function MyModulesPage() {
+  return (
+    <React.Suspense fallback={<div className="p-8 text-center text-muted-foreground">Loading...</div>}>
+      <MyModulesContent />
+    </React.Suspense>
   );
 }

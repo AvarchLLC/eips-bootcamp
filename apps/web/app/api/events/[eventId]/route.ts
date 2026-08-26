@@ -1,16 +1,23 @@
+import { auth } from '@/app/lib/auth';
+import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://143.244.213.59:4003';
+import { getApiBaseUrl, getInternalApiKey } from '@/app/lib/api';
 
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ eventId: string }> }
 ) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  const userRole = (session?.user as any)?.role;
+  if (!session?.user || (userRole !== 'ADMIN' && userRole !== 'admin')) {
+    return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+  }
+
   const resolvedParams = await params;
   try {
-    const res = await fetch(`${API_BASE}/events/${resolvedParams.eventId}`, {
+    const res = await fetch(`${getApiBaseUrl()}/events/${resolvedParams.eventId}`, {
       method: 'DELETE',
-      headers: { 'x-api-key': process.env.INTERNAL_API_KEY || 'dev-secret-key'},
+      headers: { 'x-api-key': getInternalApiKey() },
     });
 
     if (!res.ok) {

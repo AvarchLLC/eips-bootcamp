@@ -1,9 +1,10 @@
 "use server";
 
 import { auth } from '@/app/lib/auth';
-import { headers } from 'next/headers';;
+import { headers } from 'next/headers';
 import { revalidatePath } from "next/cache";
 import { apiFetch } from "@/app/lib/api";
+import { prisma } from "@/app/lib/prisma";
 
 async function verifyAdmin() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -74,9 +75,6 @@ export async function editAssignment(assignmentId: string, data: any) {
   }
 }
 
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
-
 export async function fetchSubmissions(assignmentId: string) {
   await verifyAdmin();
   const submissions = await prisma.assignmentSubmission.findMany({
@@ -98,23 +96,25 @@ export async function fetchSubmissions(assignmentId: string) {
 export async function gradeSubmission(submissionId: string, score: number, status: string, assignmentId: string, feedback?: string) {
   await verifyAdmin();
   
-  const submission = await prisma.assignmentSubmission.update({
-    where: { id: submissionId },
-    data: { score, status: status as import('@prisma/client').SubmissionStatus, feedback }
-  });
-
-  // If the assignment is graded as COMPLETED, we need to award XP to the user
-  if (status === 'COMPLETED' && score > 0) {
-    const assignment = await prisma.assignment.findUnique({ where: { id: assignmentId }});
-    
-    await prisma.xPTransaction.create({
-      data: {
-        userId: submission.userId,
-        amount: score,
-        reason: `Graded Assignment: ${assignment?.title || 'Unknown'}`,
-      }
+  await prisma.$transaction(async (tx) => {
+    const submission = await tx.assignmentSubmission.update({
+      where: { id: submissionId },
+      data: { score, status: status as import('@prisma/client').SubmissionStatus, feedback }
     });
-  }
+
+    // If the assignment is graded as COMPLETED, we need to award XP to the user
+    if (status === 'COMPLETED' && score > 0) {
+      const assignment = await tx.assignment.findUnique({ where: { id: assignmentId }});
+      
+      await tx.xPTransaction.create({
+        data: {
+          userId: submission.userId,
+          amount: score,
+          reason: `Graded Assignment: ${assignment?.title || 'Unknown'}`,
+        }
+      });
+    }
+  });
 
   // Revalidate both the specific submission page and the general assignments page
   revalidatePath(`/dashboard/admin/assignments/submissions/${assignmentId}`);
