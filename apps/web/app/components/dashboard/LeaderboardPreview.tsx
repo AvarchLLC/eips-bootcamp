@@ -25,7 +25,7 @@ function Avatar({ name, avatarUrl }: { name: string; avatarUrl?: string }) {
   }
   const initials = name.replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase() || 'U';
   const colors = ['bg-emerald-800', 'bg-blue-800', 'bg-purple-800', 'bg-pink-800', 'bg-orange-800'];
-  const idx = name.charCodeAt(0) % colors.length;
+  const idx = (name && name.length > 0 ? name.charCodeAt(0) : 0) % colors.length;
   return (
     <div className={`w-8 h-8 rounded-full ${colors[idx]} flex items-center justify-center text-xs font-bold text-foreground flex-shrink-0`}>
       {initials}

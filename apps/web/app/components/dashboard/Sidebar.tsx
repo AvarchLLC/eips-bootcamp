@@ -63,7 +63,7 @@ const adminNav: NavItem[] = [
   { label: 'Manage Events', href: '/dashboard/admin/events', icon: <Zap size={18} /> },
 ];
 
-function NavSection({ title, items, pathname, collapsed }: { title: string; items: NavItem[], pathname: string; collapsed:boolean; }) {
+function NavSection({ title, items, pathname, collapsed, onMobileClose }: { title: string; items: NavItem[], pathname: string; collapsed:boolean; onMobileClose?: () => void; }) {
   return (
     <div className="mb-6">
       {!collapsed && (
@@ -74,13 +74,16 @@ function NavSection({ title, items, pathname, collapsed }: { title: string; item
 
       <ul className="space-y-0.5">
         {items.map((item) => {
-          const active = pathname === item.href;
+          const active = item.href === '/dashboard' 
+            ? pathname === '/dashboard' 
+            : pathname.startsWith(item.href);
           
           return (
           <li key={item.href}>
             <Link
                 href={item.href}
                 title={collapsed ? item.label : ''}
+                onClick={onMobileClose}
                 className={`flex items-center
                   ${collapsed ? 'justify-center' : 'gap-3'}
                   px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ease-out hover:translate-x-1 group
@@ -218,9 +221,9 @@ export function Sidebar({ mobileOpen, onMobileClose, collapsed, toggleSidebar, }
 
         {/* Nav */}
         <nav className="flex-1 overflow-y-auto px-3 py-5 scrollbar-hide">
-          <NavSection title="Main" items={mainNav} pathname={pathname} collapsed={collapsed}/>
-          <NavSection title="CAP Program" items={capNav} pathname={pathname} collapsed={collapsed}/>
-          {isAdmin && <NavSection title="Admin" items={adminNav} pathname={pathname} collapsed={collapsed}/>}
+          <NavSection title="Main" items={mainNav} pathname={pathname} collapsed={collapsed} onMobileClose={onMobileClose}/>
+          <NavSection title="CAP Program" items={capNav} pathname={pathname} collapsed={collapsed} onMobileClose={onMobileClose}/>
+          {isAdmin && <NavSection title="Admin" items={adminNav} pathname={pathname} collapsed={collapsed} onMobileClose={onMobileClose}/>}
         </nav>
 
         {/* Upgrade CTA */}
@@ -242,10 +245,14 @@ export function Sidebar({ mobileOpen, onMobileClose, collapsed, toggleSidebar, }
             <p className="text-muted-foreground text-xs leading-relaxed mb-3">
               Unlock advanced analytics, exclusive content and priority support.
             </p>
-            <button className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs py-2.5 rounded-lg transition-all duration-200 flex items-center justify-center gap-1.5 group">
+            <Link 
+              href="/dashboard/rewards"
+              onClick={onMobileClose}
+              className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs py-2.5 rounded-lg transition-all duration-200 flex items-center justify-center gap-1.5 group"
+            >
               Upgrade Now
               <ChevronRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
-            </button>
+            </Link>
           </div>
         </div>
         )}
