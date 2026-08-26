@@ -72,12 +72,18 @@ export class BootcampService {
   }
 
   async subscribeToModule(userId: string, moduleId: string) {
-    console.log('NestJS Database URL:', process.env.DATABASE_URL);
     try {
       const module = await this.prisma.module.findUnique({
         where: { id: moduleId },
       });
       if (!module) throw new NotFoundException('Module not found');
+
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+      });
+      if (!user) {
+        throw new NotFoundException('User account not found in database. Please sign out and sign in again to sync your account.');
+      }
 
       const existing = await this.prisma.moduleSubscription.findUnique({
         where: { userId_moduleId: { userId, moduleId } },
