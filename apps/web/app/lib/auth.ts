@@ -5,7 +5,16 @@ import { prisma } from "./prisma";
 import { sendEmail } from "./email";
 
 export const auth = betterAuth({
-  trustedOrigins: ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://192.168.1.3:3000', 'http://192.168.0.104:3000', 'https://www.ethshala.com', 'https://ethshala.com'],
+  trustedOrigins: [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://192.168.1.3:3000',
+    'http://192.168.0.104:3000',
+    'https://www.ethshala.com',
+    'https://ethshala.com',
+    ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
+    ...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
+  ],
 
   user: {
     additionalFields: {
