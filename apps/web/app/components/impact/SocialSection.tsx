@@ -23,9 +23,19 @@ const LinkedinIcon = ({
 const platformUrls = {
   LinkedIn: 'https://www.linkedin.com/company/ethshala',
   Twitter: 'https://x.com/Its_EthShala',
+} as const;
+
+type SocialPlatform = keyof typeof platformUrls;
+
+type SocialPost = {
+  image: string;
+  date: string;
+  title: string;
+  platform: SocialPlatform;
+  href: string;
 };
 
-const socialPosts = [
+const socialPosts: SocialPost[] = [
   {
     image: '/social_images/Campus_Ambassador.png',
     date: '25th September, 2026',
