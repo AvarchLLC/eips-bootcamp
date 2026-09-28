@@ -31,7 +31,7 @@ export default function CommunityPage() {
 
                 {/* ===== COMMUNITY ACTIVITIES SECTION ===== */}
                 <section className="relative">
-                    <div className="mb-8 max-w-xl">
+                    {/* <div className="mb-8 max-w-xl">
                         <div className="flex items-center gap-3 mb-2">
                             <div className="p-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30">
                                 <Users size={20} className="text-emerald-400" />
@@ -41,7 +41,7 @@ export default function CommunityPage() {
                                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">Events, media coverage, and social impact from the people moving Ethereum forward.</p>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
 
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-1">
                         {/* Events Section */}
@@ -81,7 +81,7 @@ export default function CommunityPage() {
                 {/* ===== CAMPUS NETWORK SECTION ===== */}
                 <section className="relative">
                     <div className="mb-8 max-w-xl">
-                        <div className="flex items-center gap-3 mb-2">
+                        {/* <div className="flex items-center gap-3 mb-2">
                             <div className="p-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30">
                                 <Globe size={20} className="text-emerald-400" />
                             </div>
@@ -89,7 +89,7 @@ export default function CommunityPage() {
                                 <h2 className="text-3xl font-bold tracking-tight text-foreground">Campus network</h2>
                                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">The colleges, clubs, and partners turning curiosity into practical contribution.</p>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
 
                     <div className="relative group">
