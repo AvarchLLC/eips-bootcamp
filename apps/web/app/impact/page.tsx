@@ -43,7 +43,7 @@ export default function CommunityPage() {
                         </div>
                     </div> */}
 
-                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-1">
+                    <div className="grid grid-cols-1 gap-18 lg:grid-cols-1">
                         {/* Events Section */}
                         <div className="relative group">
                             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
