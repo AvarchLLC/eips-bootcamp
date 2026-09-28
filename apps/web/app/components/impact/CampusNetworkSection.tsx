@@ -1,7 +1,7 @@
 // apps/web/components/community/CampusNetworkSection.tsx
 
 import React, { useState } from 'react';
-import { CheckCircle, Handshake, Target, MapPin, Users } from 'lucide-react';
+import { Check, Globe, MapPin, Target, Users, ExternalLink, CheckCircle, Handshake } from 'lucide-react';
 
 interface College {
   id: string;
@@ -10,10 +10,11 @@ interface College {
   students: number;
   activities?: number;
   status?: string;
+  website: string;
 }
 
 const engagedColleges: College[] = [
-  { id: '1', name: 'Hooghly Engineering & Technology College', city: 'Hugli-Chuchura, West Bengal', students: 6000, activities: 1 },
+  { id: '1', name: 'Hooghly Engineering & Technology College', city: 'Hugli-Chuchura, West Bengal', students: 6000, activities: 1, website: 'https://www.hetc.ac.in/' },
 ];
 
 // const activePartnerships: College[] = [
@@ -23,19 +24,19 @@ const engagedColleges: College[] = [
 // ];
 
 const potentialPartners: College[] = [
-  { id: '1', name: 'Hooghly Engineering & Technology College', city: 'Hugli-Chuchura, West Bengal', students: 6000, activities: 1 },
-  { id: '2', name: 'Heritage Institute of Technology', city: 'Kolkata, West Bengal', students: 9000 },
-  { id: '3', name: 'Academy of Technology', city: 'Hooghly, West Bengal', students: 8500 },
-  { id: '4', name: 'Techno Main Salt Lake', city: 'Bidhannagar, West Bengal', students: 7500 },
+  { id: '1', name: 'Hooghly Engineering & Technology College', city: 'Hugli-Chuchura, West Bengal', students: 6000, activities: 1, website: 'https://www.hetc.ac.in/' },
+  { id: '2', name: 'Heritage Institute of Technology', city: 'Kolkata, West Bengal', students: 9000, website: 'https://heritageit.edu/' },
+  { id: '3', name: 'Academy of Technology', city: 'Hooghly, West Bengal', students: 8500, website: 'https://aot.edu.in/' },
+  { id: '4', name: 'Techno Main Salt Lake', city: 'Bidhannagar, West Bengal', students: 7500, website: 'https://www.technomainsaltlake.ticollege.ac.in/' },
 ];
 
 export const CampusNetworkSection: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'engaged' | 'active' | 'potential'>('engaged');
 
   const tabs = [
-    { id: 'engaged', label: 'Already Engaged', icon: CheckCircle, color: 'text-emerald-400' },
-    // { id: 'active', label: 'Active Partnerships', icon: Handshake, color: 'text-blue-400' },
-    { id: 'potential', label: 'Potential Partners', icon: Target, color: 'text-orange-400' },
+    { id: 'engaged', label: 'Already Engaged', color: 'text-emerald-400' },
+    // { id: 'active', label: 'Active Partnerships', color: 'text-blue-400' },
+    { id: 'potential', label: 'Potential Partners', color: 'text-orange-400' },
   ];
 
   const getDisplayData = () => {
@@ -51,21 +52,20 @@ export const CampusNetworkSection: React.FC = () => {
 
   const displayData = getDisplayData();
   const activeTabConfig = tabs.find(t => t.id === activeTab);
-  const TabIcon = activeTabConfig?.icon || CheckCircle;
+  // const TabIcon = activeTabConfig?.icon || CheckCircle;
 
   return (
     <div className="relative group">
       <div
         className={`
-          relative rounded-2xl
-          border border-emerald-500/30
-          bg-gradient-to-br from-emerald-500/10 to-emerald-500/5
-          backdrop-blur-xl
-          p-6
+          relative rounded-[26px]
+          border border-border
+          bg-card/80
+          p-5
+          shadow-[0_18px_55px_rgba(0,0,0,0.12)]
           transition-all duration-300
-          hover:border-emerald-500/60
-          hover:shadow-[0_0_30px_rgba(16,185,129,0.2)]
           overflow-hidden
+          sm:p-6
         `}
       >
         {/* Background gradient */}
@@ -73,16 +73,18 @@ export const CampusNetworkSection: React.FC = () => {
 
         <div className="relative z-10">
           {/* Header */}
-          <div className="mb-6">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-2xl">🌐</span>
-              <p className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">
+          <div className="mb-6 flex items-center gap-3 border-b border-border pb-4">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-400/20 bg-emerald-500/5 text-emerald-300">
+              <Globe size={16} className="" />
+            </div>
+            <div>
+              <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-emerald-300/80">
                 Campus Network
               </p>
+              <h3 className="mt-1 text-2xl font-semibold tracking-[-0.04em] text-foreground">
+                College Partnerships
+              </h3>
             </div>
-            <h3 className="text-2xl font-bold text-foreground">
-              College Partnerships
-            </h3>
           </div>
 
           {/* Tabs */}
@@ -99,12 +101,14 @@ export const CampusNetworkSection: React.FC = () => {
                   text-sm
                   ${
                     activeTab === tab.id
-                      ? 'border-emerald-500/50 bg-emerald-500/20 text-emerald-200'
-                      : 'border-border bg-card/60 text-muted-foreground hover:border-emerald-500/40'
+                      ? tab.id === 'potential'
+                        ? 'border-orange-500/40 bg-orange-500/15 text-orange-700 dark:text-orange-200'
+                        : 'border-emerald-500/40 bg-emerald-500/15 text-emerald-700 dark:text-emerald-200'
+                      : 'border-border bg-background/70 text-muted-foreground hover:border-emerald-500/40'
                   }
                 `}
               >
-                <tab.icon size={18} />
+                {/* <tab.icon size={18} /> */}
                 <span>{tab.label}</span>
                 <span className="ml-auto text-xs font-bold opacity-70">
                   {tab.id === 'engaged' ? engagedColleges.length : 
@@ -122,7 +126,7 @@ export const CampusNetworkSection: React.FC = () => {
                 key={college.id}
                 className={`
                   rounded-lg border border-border
-                  bg-card/60 hover:bg-accent
+                  bg-card/70 hover:bg-accent
                   p-4 transition-all duration-200
                   group/college
                 `}
@@ -133,32 +137,33 @@ export const CampusNetworkSection: React.FC = () => {
                     <p className="text-sm font-semibold text-foreground truncate">
                       {college.name}
                     </p>
-                    <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                    <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
                       <MapPin size={12} />
                       {college.city}
                     </p>
                   </div>
-                  {activeTab === 'engaged' && (
-                    <div className="flex-shrink-0 p-1.5 rounded-lg bg-emerald-500/20 border border-emerald-500/30">
-                      <CheckCircle size={16} className="text-emerald-400" />
-                    </div>
-                  )}
-                  {activeTab === 'active' && (
-                    <div className="flex-shrink-0 p-1.5 rounded-lg bg-blue-500/20 border border-blue-500/30">
-                      <Handshake size={16} className="text-blue-400" />
-                    </div>
-                  )}
-                  {activeTab === 'potential' && (
-                    <div className="flex-shrink-0 p-1.5 rounded-lg bg-orange-500/20 border border-orange-500/30">
-                      <Target size={16} className="text-orange-400" />
-                    </div>
-                  )}
+
+                  <a
+                    href={college.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Visit ${college.name}`}
+                    className={`group/link flex-shrink-0 rounded-lg border p-1.5 transition-colors ${
+                      activeTab === 'engaged'
+                        ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:border-emerald-400/60 hover:bg-emerald-500/15'
+                        : activeTab === 'active'
+                          ? 'border-blue-500/30 bg-blue-500/10 text-blue-300 hover:border-blue-400/60 hover:bg-blue-500/15'
+                          : 'border-orange-500/30 bg-orange-500/10 text-orange-300 hover:border-orange-400/60 hover:bg-orange-500/15'
+                    }`}
+                  >
+                    <ExternalLink size={16} className="transition-transform group-hover/link:scale-110" />
+                  </a>
                 </div>
 
                 {/* Stats */}
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="rounded border border-border bg-background/50 p-2">
-                    <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
+                  <div className="rounded border border-border bg-background/70 p-2">
+                    <p className="mb-1 flex items-center gap-1 text-xs text-muted-foreground">
                       <Users size={12} />
                       Students
                     </p>
@@ -166,8 +171,8 @@ export const CampusNetworkSection: React.FC = () => {
                       {(college.students / 1000).toFixed(1)}K
                     </p>
                   </div>
-                  <div className="rounded border border-border bg-background/50 p-2">
-                    <p className="text-xs text-muted-foreground mb-1">
+                  <div className="rounded border border-border bg-background/70 p-2">
+                    <p className="mb-1 text-xs text-muted-foreground">
                       {activeTab === 'active' ? 'Status' : 'Activities'}
                     </p>
                     <p className="text-sm font-bold text-emerald-400">
