@@ -27,7 +27,7 @@ export default function CommunityPage() {
                 </section>
 
                 {/* Decorative divider */}
-                <div className="flex items-center gap-4 text-xs uppercase tracking-[0.24em] text-emerald-400/70"><span className="h-px flex-1 bg-emerald-400/20" /><span>Explore the network</span><ArrowDownRight size={14} /><span className="h-px flex-1 bg-emerald-400/20" /></div>
+                {/* <div className="flex items-center gap-4 text-xs uppercase tracking-[0.24em] text-emerald-400/70"><span className="h-px flex-1 bg-emerald-400/20" /><span>Explore the network</span><ArrowDownRight size={14} /><span className="h-px flex-1 bg-emerald-400/20" /></div> */}
 
                 {/* ===== COMMUNITY ACTIVITIES SECTION ===== */}
                 <section className="relative">
@@ -71,12 +71,13 @@ export default function CommunityPage() {
                 </section>
 
                 {/* Decorative divider */}
-                <div className="h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
+                {/* <div className="h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" /> */}
 
                 {/* ===== EVENT IMAGE SHOWCASE ===== */}
                 <EventImageShowcase />
 
-                <div className="h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
+                {/* Decorative divider */}
+                {/* <div className="h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" /> */}
 
                 {/* ===== CAMPUS NETWORK SECTION ===== */}
                 <section className="relative">
