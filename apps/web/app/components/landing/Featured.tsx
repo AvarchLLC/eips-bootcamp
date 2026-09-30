@@ -57,9 +57,9 @@ export function Featured() {
                   alt=""
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                 />
-                <span className="absolute bottom-4 left-4 rounded-sm bg-background/95 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-foreground">
+                {/* <span className="absolute bottom-4 left-4 rounded-sm bg-background/95 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-foreground">
                   {featuredPost.platform} · {featuredPost.date}
-                </span>
+                </span> */}
               </div>
             </a>
 
