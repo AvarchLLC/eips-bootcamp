@@ -49,7 +49,7 @@ export const EventsSection: React.FC = () => {
               <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-sky-600 dark:text-sky-300/80">
                 Events & Workshops
               </p>
-              <h3 className="mt-1 text-2xl font-semibold tracking-[-0.04em] text-foreground">
+              <h3 className="mt-1 font-grotesk text-2xl font-semibold tracking-[-0.04em] text-foreground">
                 College Events
               </h3>
             </div>
@@ -60,7 +60,7 @@ export const EventsSection: React.FC = () => {
               <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-blue-400">
                 On the calendar
               </p>
-              <h4 className="mt-2 text-xl font-semibold tracking-[-0.03em] text-foreground">Recent gatherings</h4>
+              <h4 className="mt-2 font-grotesk text-xl font-semibold tracking-[-0.03em] text-foreground">Recent gatherings</h4>
             </div>
             <span className="text-xs text-slate-400">{events.length} highlights</span>
           </div>
@@ -84,7 +84,7 @@ export const EventsSection: React.FC = () => {
                 <div className="p-4 sm:p-5">
                   <div className="mb-4 flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                      <h4 className="text-[1.05rem] font-semibold leading-tight tracking-[-0.04em] text-foreground">
+                      <h4 className="font-grotesk text-[1.05rem] font-semibold leading-tight tracking-[-0.04em] text-foreground">
                         {event.title}
                       </h4>
                       <p className="mt-2 text-sm text-muted-foreground">{event.college}</p>

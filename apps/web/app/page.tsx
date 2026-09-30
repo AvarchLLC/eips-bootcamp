@@ -7,6 +7,7 @@ import { JourneySection } from './components/landing/JourneySection';
 import { GovernanceSection } from './components/landing/GovernanceSection';
 import { CommunitySection } from './components/landing/CommunitySection';
 import { Footer } from './components/landing/Footer';
+import { Featured } from './components/landing/Featured';
 
 export default function HomePage() {
   return (
@@ -14,6 +15,7 @@ export default function HomePage() {
       <Navbar className=" bg-background/90 backdrop-blur-xl border-b border-border"/>
       <main className="mt-16">
         <HeroSection />
+        <Featured />
         <LearningTracks />
         <WhyEIPs />
         <GovernanceSection />

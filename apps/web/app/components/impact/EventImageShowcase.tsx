@@ -8,13 +8,25 @@ const eventImages = [
     src: '/events/event_images/IMG_4191.png',
     alt: 'Speaker presenting on stage at a conference',
     eyebrow: 'HETC · Offline Session',
-    title: 'A Space for Ideas, Learning, and Experimentation',
+    title: 'A Space for Ideas, Learning, and Experimentation.',
+  },
+  {
+    src: '/events/event_images/InnovoCon2_1.jpeg',
+    alt: 'Students collaborating around a table at a workshop',
+    eyebrow: 'InnovoCon Hacknex 2.0 · Hackathon',
+    title: 'From Ideas to Working Solutions.',
   },
   {
     src: '/events/event_images/IMG_4217.png',
     alt: 'Students collaborating around a table at a workshop',
     eyebrow: 'HETC · Offline Session',
     title: 'Learning becomes electric when the room builds together.',
+  },
+  {
+    src: '/events/event_images/InnovoCon2_2.jpeg',
+    alt: 'Students collaborating around a table at a workshop',
+    eyebrow: 'InnovoCon Hacknex 2.0 · Hackathon',
+    title: 'From First Idea to Final Build.',
   },
   {
     src: '/events/event_images/IMG_4213.png',

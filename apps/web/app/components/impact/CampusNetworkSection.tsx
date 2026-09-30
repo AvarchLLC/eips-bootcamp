@@ -15,6 +15,7 @@ interface College {
 
 const engagedColleges: College[] = [
   { id: '1', name: 'Hooghly Engineering & Technology College', city: 'Hugli-Chuchura, West Bengal', students: 6000, activities: 1, website: 'https://www.hetc.ac.in/' },
+  // { id: '2', name: 'Heritage Institute of Technology', city: 'Kolkata, West Bengal', students: 9000, website: 'https://heritageit.edu/' },
 ];
 
 // const activePartnerships: College[] = [

@@ -107,3 +107,28 @@ code, pre, .eip-number {
   from { transform: scaleY(0); }
   to { transform: scaleY(1); }
 }
+
+@keyframes social-posts-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.social-posts-track {
+  display: flex;
+  width: max-content;
+  animation: social-posts-marquee 42s linear infinite;
+}
+
+.social-posts-track.is-paused {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .social-posts-track {
+    animation: none;
+  }
+
+  .social-posts-viewport {
+    overflow-x: auto;
+  }
+}

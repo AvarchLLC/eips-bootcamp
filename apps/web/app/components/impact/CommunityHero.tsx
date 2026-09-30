@@ -17,7 +17,7 @@ export const CommunityHero: React.FC = () => {
         {/* Left: Welcome Text */}
         <div>
           <div className="mb-6">
-            <h1 className="text-5xl md:text-6xl font-bold mb-3">
+            <h1 className="mb-3 font-grotesk text-5xl font-black md:text-6xl">
               <span className="bg-gradient-to-r from-emerald-400 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">
                 Building Web3 Community
               </span>
