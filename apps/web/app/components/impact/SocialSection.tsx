@@ -34,7 +34,7 @@ export function SocialSection() {
 
   return (
     <section
-      className="relative overflow-hidden rounded-[2rem] bg-background px-4 py-10 shadow-2xl shadow-emerald-950/20 sm:px-6 lg:px-8"
+      className="relative overflow-hidden rounded-[2rem] bg-background px-4 py-10 shadow-emerald-950/20 sm:px-6 lg:px-8"
       role="region"
       aria-roledescription="carousel"
       aria-label="Latest ETHShala posts"
@@ -62,7 +62,7 @@ export function SocialSection() {
       </div>
 
       <div className="relative z-10">
-        <div className="social-posts-viewport overflow-hidden">
+        <div className="social-posts-viewport overflow-hidden pb-2">
           <div className={`social-posts-track${isPaused ? ' is-paused' : ''}`}>
             {[false, true].map((isDuplicate) => (
               <div key={String(isDuplicate)} className="flex shrink-0 gap-6 pr-6" aria-hidden={isDuplicate}>
