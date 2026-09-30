@@ -1,6 +1,8 @@
 'use client';
 
-import { ArrowUpRight, Megaphone } from 'lucide-react';
+import { ArrowUpRight, Image as ImageIcon, Megaphone } from 'lucide-react';
+import { useState } from 'react';
+import { socialPosts } from '../../lib/social-posts';
 
 const TwitterIcon = ({
   size = 24,
@@ -25,50 +27,26 @@ const platformUrls = {
   Twitter: 'https://x.com/Its_EthShala',
 } as const;
 
-type SocialPlatform = keyof typeof platformUrls;
-
-type SocialPost = {
-  image: string;
-  date: string;
-  title: string;
-  platform: SocialPlatform;
-  href: string;
-};
-
-const socialPosts: SocialPost[] = [
-  {
-    image: '/social_images/Campus_Ambassador.png',
-    date: '25th September, 2026',
-    title: 'Meet our newest ETHShala Campus Ambassador! We are excited to welcome Ruyam Bhattacharjee from Hooghly Engineering & Technology College to the ETHShala community.',
-    platform: 'Twitter',
-    href: 'https://x.com/Its_EthShala/status/2103147834929562074?s=20',
-  },
-  {
-    image: '/social_images/Campus_Partner.png',
-    date: '23rd September, 2026',
-    title: 'Ethereum needs developers, researchers, writers, designers & community builders. ETHShala invites colleges to create multidisciplinary learning cohorts and explore contributions together. ',
-    platform: 'Twitter',
-    href: 'https://x.com/Its_EthShala/status/2102820295069638960?s=20',
-  },
-  {
-    image: '/events/event_images/IMG_4213.png',
-    date: '27th August, 2026',
-    title: 'Really glad I got to do this today! Rajdeep Chakraborty and I got the opportunity to represent Avarch through ETHShala at Hooghly Engineering & Technology College (Official), where we introduced students to blockchain, Ethereum and the wider Web3 ecosystem.',
-    platform: 'LinkedIn',
-    href: 'https://lnkd.in/p/drJJ2K-f',
-  },
-  {
-    image: '/events/event_images/IMG_4203.png',
-    date: '27th August, 2026',
-    title: 'Really happy to have been part of this experience today! Subhrajeet Bhattacharjee and I had the opportunity to represent Avarch through ETHShala at Hooghly Engineering & Technology College (Official), where we interacted with students and introduced them to Blockchain, Ethereum, EIPs, and the broader Web3 ecosystem.',
-    platform: 'LinkedIn',
-    href: 'https://lnkd.in/p/dbvRkhUV',
-  },
-];
-
 export function SocialSection() {
+  const [isHovered, setIsHovered] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const isPaused = isHovered || isFocused;
+
   return (
-    <section className="relative overflow-hidden rounded-[2rem] bg-background px-4 py-10 shadow-2xl shadow-emerald-950/20 sm:px-6 lg:px-8">
+    <section
+      className="relative overflow-hidden rounded-[2rem] bg-background px-4 py-10 shadow-2xl shadow-emerald-950/20 sm:px-6 lg:px-8"
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="Latest ETHShala posts"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onFocus={() => setIsFocused(true)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          setIsFocused(false);
+        }
+      }}
+    >
       {/* <div className="pointer-events-none absolute -left-32 top-0 h-72 w-72 rounded-full bg-cyan-400/10 blur-3xl" />
       <div className="pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-emerald-400/10 blur-3xl" /> */}
 
@@ -83,49 +61,72 @@ export function SocialSection() {
         </h2>
       </div>
 
-      <div className="relative z-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-        {socialPosts.map((post) => (
-          <article
-            key={`${post.date}-${post.platform}`}
-            className="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-lg shadow-black/20 transition duration-300 hover:-translate-y-1 hover:border-orange-400/60 hover:shadow-orange-950/20"
-          >
-            <div className="aspect-[1.65/1] overflow-hidden bg-emerald-950/50">
-              <img src={post.image} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
-            </div>
+      <div className="relative z-10">
+        <div className="social-posts-viewport overflow-hidden">
+          <div className={`social-posts-track${isPaused ? ' is-paused' : ''}`}>
+            {[false, true].map((isDuplicate) => (
+              <div key={String(isDuplicate)} className="flex shrink-0 gap-6 pr-6" aria-hidden={isDuplicate}>
+                {socialPosts.map((post, index) => (
+                  <article
+                    key={`${post.date}-${post.platform}-${isDuplicate}`}
+                    aria-roledescription="slide"
+                    aria-label={`${index + 1} of ${socialPosts.length}`}
+                    className="group flex w-[min(82vw,260px)] shrink-0 flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-lg shadow-black/20 transition duration-300 hover:-translate-y-1 hover:border-orange-400/60 hover:shadow-orange-950/20"
+                  >
+                    <div className="aspect-[1.65/1] overflow-hidden bg-emerald-950/50">
+                      {post.image ? (
+                        <img src={post.image} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                      ) : (
+                        <div className="flex h-full items-center justify-center text-emerald-300/60" aria-label="Post image not added yet">
+                          <ImageIcon size={28} aria-hidden="true" />
+                        </div>
+                      )}
+                    </div>
 
-            <div className="flex flex-1 flex-col border-t border-emerald-400/10 p-5">
-                <a
-                href={platformUrls[post.platform]}
-                target="_blank"
-                rel="noopener noreferrer"
-                >
-              <div className="mb-5 flex items-center justify-between gap-3">
-                <div className="flex min-w-0 items-center gap-2">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-emerald-300/30 bg-emerald-300/10 p-1.5">
-                    <img src="/brand/ethshala_logo.svg" alt="EthShala" className="h-full w-full object-contain" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-foreground">ETHShala</p>
-                    <p className="text-xs text-muted-foreground">{post.date}</p>
-                  </div>
-                </div>
-                {post.platform === 'LinkedIn' ? (
-                  <LinkedinIcon size={22} className="shrink-0 text-cyan-300" aria-label="LinkedIn" />
-                ) : (
-                  <TwitterIcon size={22} className="shrink-0 text-cyan-300" aria-label="X / Twitter" />
-                )}
+                    <div className="flex flex-1 flex-col border-t border-emerald-400/10 p-5">
+                      <a
+                        href={platformUrls[post.platform]}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        tabIndex={isDuplicate ? -1 : undefined}
+                      >
+                        <div className="mb-5 flex items-center justify-between gap-3">
+                          <div className="flex min-w-0 items-center gap-2">
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-emerald-300/30 bg-emerald-300/10 p-1.5">
+                              <img src="/brand/ethshala_logo.svg" alt="EthShala" className="h-full w-full object-contain" />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="truncate text-sm font-semibold text-foreground">ETHShala</p>
+                              <p className="text-xs text-muted-foreground">{post.date}</p>
+                            </div>
+                          </div>
+                          {post.platform === 'LinkedIn' ? (
+                            <LinkedinIcon size={22} className="shrink-0 text-cyan-300" aria-label="LinkedIn" />
+                          ) : (
+                            <TwitterIcon size={22} className="shrink-0 text-cyan-300" aria-label="X / Twitter" />
+                          )}
+                        </div>
+                      </a>
+
+                      <p className="line-clamp-3 text-sm leading-6 text-muted-foreground">{post.title}</p>
+
+                      <a
+                        href={post.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        tabIndex={isDuplicate ? -1 : undefined}
+                        className="mt-auto flex items-center gap-1 pt-6 text-sm font-medium text-orange-400 transition hover:text-orange-300"
+                      >
+                        View post
+                        <ArrowUpRight size={16} />
+                      </a>
+                    </div>
+                  </article>
+                ))}
               </div>
-              </a>
-
-              <p className="line-clamp-3 text-sm leading-6 text-muted-foreground">{post.title}</p>
-
-              <a href={post.href} target="_blank" rel="noopener noreferrer" className="mt-auto flex items-center gap-1 pt-6 text-sm font-medium text-orange-400 transition hover:text-orange-300">
-                View post
-                <ArrowUpRight size={16} />
-              </a>
-            </div>
-          </article>
-        ))}
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
