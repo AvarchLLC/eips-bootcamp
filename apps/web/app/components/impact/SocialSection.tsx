@@ -55,7 +55,7 @@ export function SocialSection() {
           <Megaphone size={15} />
           <span>The latest buzz</span>
         </div>
-        <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+        <h2 className="font-grotesk text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
           Our latest <span className="text-orange-400">posts</span>{' '}
           <span className="font-sans text-foreground">&amp;</span>{' '}news
         </h2>

@@ -17,7 +17,7 @@ export default function CommunityPage() {
     return (
         <div className="min-h-screen overflow-hidden bg-background text-foreground">
             <Navbar />
-            <main className="relative mx-auto max-w-7xl px-4 pt-24 pb-24 sm:px-6 lg:px-8">
+            <main className="relative mx-auto max-w-7xl px-4 pt-24 pb-24 font-body sm:px-6 lg:px-8">
             <div className="pointer-events-none absolute -right-40 top-24 h-96 w-96 rounded-full bg-emerald-400/10 blur-3xl" />
             <div className="pointer-events-none absolute left-0 top-[34rem] h-80 w-80 rounded-full bg-cyan-400/5 blur-3xl" />
             <div className="relative space-y-20">
