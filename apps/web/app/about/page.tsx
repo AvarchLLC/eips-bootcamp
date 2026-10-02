@@ -391,7 +391,7 @@ export default function AboutPage() {
             <p className="text-xs text-muted-foreground mb-6">For collaboration, platform questions, or product feedback, contact us directly.</p>
             <div className="p-4 rounded-xl border border-border bg-muted/30">
               <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Email</p>
-              <a href="mailto:dev@avarch.com" className="text-sm font-medium text-primary hover:underline flex items-center gap-2">dev@avarch.com <ArrowRight className="w-3 h-3"/></a>
+              <a href="mailto:contact@ethshala.com" className="text-sm font-medium text-primary hover:underline flex items-center gap-2">contact@ethshala.com <ArrowRight className="w-3 h-3"/></a>
             </div>
           </div>
         </div>
