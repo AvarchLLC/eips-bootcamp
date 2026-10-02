@@ -13,7 +13,7 @@ export function JourneySection() {
   return (
     <section id="journey" className="py-20 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-10 max-w-2xl">
+        <div className="mb-10 max-w-2xl mx-auto text-center">
           <p className="text-emerald-400 text-sm font-semibold mb-3 tracking-wide">Contributor Journey</p>
           <h2 className="text-foreground font-black text-3xl sm:text-4xl leading-tight">From learner to contributor</h2>
           <p className="text-muted-foreground mt-3">A clear progression that takes you from discovery through active participation and contribution.</p>
