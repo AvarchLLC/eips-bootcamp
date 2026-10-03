@@ -15,7 +15,7 @@ interface College {
 
 const engagedColleges: College[] = [
   { id: '1', name: 'Hooghly Engineering & Technology College', city: 'Hugli-Chuchura, West Bengal', students: 6000, activities: 1, website: 'https://www.hetc.ac.in/' },
-  // { id: '2', name: 'Heritage Institute of Technology', city: 'Kolkata, West Bengal', students: 9000, website: 'https://heritageit.edu/' },
+  { id: '2', name: 'Heritage Institute of Technology', city: 'Kolkata, West Bengal', students: 9000, website: 'https://heritageit.edu/' },
 ];
 
 // const activePartnerships: College[] = [
@@ -27,8 +27,9 @@ const engagedColleges: College[] = [
 const potentialPartners: College[] = [
   { id: '1', name: 'Hooghly Engineering & Technology College', city: 'Hugli-Chuchura, West Bengal', students: 6000, activities: 1, website: 'https://www.hetc.ac.in/' },
   { id: '2', name: 'Heritage Institute of Technology', city: 'Kolkata, West Bengal', students: 9000, website: 'https://heritageit.edu/' },
-  { id: '3', name: 'Academy of Technology', city: 'Hooghly, West Bengal', students: 8500, website: 'https://aot.edu.in/' },
-  { id: '4', name: 'Techno Main Salt Lake', city: 'Bidhannagar, West Bengal', students: 7500, website: 'https://www.technomainsaltlake.ticollege.ac.in/' },
+  { id: '3', name: 'Techno Main Salt Lake', city: 'Bidhannagar, West Bengal', students: 7500, website: 'https://www.technomainsaltlake.ticollege.ac.in/' },
+  { id: '4', name: 'MCKV Institute of Engineering', city: 'Liluah, West Bengal', students: 8000, website: 'https://www.mckvie.edu.in/' },
+  // { id: '5', name: 'Academy of Technology', city: 'Hooghly, West Bengal', students: 8500, website: 'https://aot.edu.in/' },
 ];
 
 export const CampusNetworkSection: React.FC = () => {
