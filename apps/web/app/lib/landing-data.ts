@@ -128,31 +128,29 @@ export const whyCards: WhyCard[] = [
 ];
 
 export const navLinks = [
-  { label: 'Learn', href: '/#learn' },
-  { label: 'EIPs', href: '/#eips' },
-  { label: 'Governance', href: '/#governance' },
+  { label: 'Home', href: '/' },
+  // { label: 'Featured', href: '/#featured' },
+  // { label: 'EIPs', href: '/#eips' },
+  // { label: 'Governance', href: '/#governance' },
   { label: 'Community', href: '/#community' },
-  { label: 'About', href: '/about' },
   { label: 'Impact', href: '/impact' },
+  { label: 'Dashboard', href: '/dashboard' },
+  { label: 'About Us', href: '/about' },
 ];
 
 export const footerLinks = {
-  joinUs: [
-    // Add Discord invite later when specific channel is created.
-    { label: 'Discord', href: '/' },
-  ],
   important: [
     { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Marketplace', href: '/dashboard/marketplace' },
-    { label: 'My Learning', href: '/dashboard/learning' },
-    { label: 'Referrals', href: '/dashboard/referrals' },
+    // { label: 'Marketplace', href: '/dashboard/marketplace' },
+    // { label: 'My Learning', href: '/dashboard/learning' },
+    // { label: 'Referrals', href: '/dashboard/referrals' },
+    { label: 'Impact', href: '/impact' },
     { label: 'About Us', href: '/about' },
     { label: 'Assets', href: '/assets' },
   ],
   followUs: [
-    // { label: 'YouTube', href: 'https://www.youtube.com/@etherworldco' },
     { label: 'X', href: 'https://x.com/Its_EthShala' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/company/ethshala/' },
-    // { label: 'EtherWorld', href: 'https://etherworld.co/' },
+    { label: 'Discord', href: '/' },
   ],
 };
