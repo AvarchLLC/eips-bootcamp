@@ -1,146 +1,122 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { ArrowUpRight, ArrowRight } from 'lucide-react';
+import { useRef } from 'react';
+import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 import { featuredPosts } from '../../lib/social-posts';
 
-const UPDATE_INTERVAL_MS = 5000;
-
 export function Featured() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [progress, setProgress] = useState(0);
-  const featuredPost = featuredPosts[activeIndex];
+  const storiesRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const animationFrame = window.requestAnimationFrame(() => setProgress(100));
-    const timer = window.setTimeout(() => {
-      setProgress(0);
-      setActiveIndex((index) => (index + 1) % featuredPosts.length);
-    }, UPDATE_INTERVAL_MS);
-
-    return () => {
-      window.cancelAnimationFrame(animationFrame);
-      window.clearTimeout(timer);
-    };
-  }, [activeIndex]);
+  const scrollStories = (direction: -1 | 1) => {
+    storiesRef.current?.scrollBy({
+      left: direction * 260,
+      behavior: 'smooth',
+    });
+  };
 
   return (
-    <section className="bg-background py-16 sm:py-20" aria-labelledby="featured-heading">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-7 flex flex-col justify-between gap-4 border-b border-border pb-5 sm:flex-row sm:items-end">
+    <section
+      className="overflow-hidden bg-[#06100e] py-9 text-white sm:py-11"
+      aria-labelledby="featured-heading"
+    >
+      <div className="mx-auto grid max-w-7xl gap-6 px-5 sm:px-8 lg:grid-cols-[210px_minmax(0,1fr)] lg:items-center lg:gap-5 lg:px-12">
+        <div>
           <div>
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-400">
-              ETHShala updates
+            <p className="mb-2 text-[9px] font-semibold uppercase tracking-[0.22em] text-white/70">
+              From the road
             </p>
-            <h2 id="featured-heading" className="text-3xl font-bold text-foreground sm:text-4xl">
-              Featured
-            </h2>
+            <div className="relative inline-block pb-5">
+              <h2
+                id="featured-heading"
+                className="text-[clamp(1.65rem,3vw,2rem)] font-semibold leading-[1.08] tracking-[-0.035em]"
+              >
+                Real students.
+                <br />
+                Real campuses.
+              </h2>
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 220 22"
+                className="absolute bottom-0 left-[10%] w-[82%] overflow-visible"
+                fill="none"
+              >
+                <path
+                  d="M3 16C55 3 145 4 215 7M24 21C88 11 159 8 191 11"
+                  stroke="#48d6b2"
+                  strokeLinecap="round"
+                  strokeWidth="3"
+                />
+              </svg>
+            </div>
           </div>
-          <p className="max-w-sm text-sm leading-6 text-muted-foreground sm:text-right">
-            Campus stories, community milestones, and the latest from across ETHShala.
-          </p>
+
+          <div className="mt-3 flex gap-2">
+            <button
+              type="button"
+              aria-label="Scroll campus stories left"
+              onClick={() => scrollStories(-1)}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/25 text-white/80 transition-colors hover:border-white hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              <ArrowLeft size={16} />
+            </button>
+            <button
+              type="button"
+              aria-label="Scroll campus stories right"
+              onClick={() => scrollStories(1)}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/25 text-white/80 transition-colors hover:border-white hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              <ArrowRight size={16} />
+            </button>
+          </div>
         </div>
 
-        <div className="grid gap-5 lg:grid-cols-[1.45fr_1fr]">
-          <article className="overflow-hidden rounded-xl border border-border bg-card">
+        <div
+          ref={storiesRef}
+          className="scrollbar-hide flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2"
+          aria-label="Campus stories"
+        >
+          {featuredPosts.map((post) => (
             <a
-              href={featuredPost.href}
+              key={post.href}
+              href={post.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="group block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
-              aria-label={`Open update: ${featuredPost.headline}`}
+              aria-label={`Open campus story: ${post.headline}`}
+              className="group relative isolate flex h-[190px] w-[min(78vw,230px)] shrink-0 snap-start flex-col justify-end overflow-hidden rounded-md bg-[#1d2925] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#61d9b9] sm:h-[205px] sm:w-[240px]"
             >
-              <div className="relative aspect-[16/7] overflow-hidden bg-muted">
-                <img
-                  src={featuredPost.image}
-                  alt=""
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                />
-                {/* <span className="absolute bottom-4 left-4 rounded-sm bg-background/95 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-foreground">
-                  {featuredPost.platform} · {featuredPost.date}
-                </span> */}
+              <img
+                src={post.image}
+                alt=""
+                className="absolute inset-0 -z-20 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#06100e] via-[#06100e]/75 to-transparent" />
+              <div className="p-3">
+                <p className="mb-1 text-[9px] font-semibold text-[#f1c84b]">
+                  {post.headline.includes('Heritage')
+                    ? 'Heritage Institute of Technology'
+                    : post.headline.includes('Academy')
+                      ? 'Academy of Technology'
+                      : post.headline.includes('HETC') ||
+                          post.title.includes('Hooghly Engineering')
+                        ? 'HETC'
+                        : post.platform}
+                </p>
+                <h3 className="line-clamp-2 text-[13px] font-semibold leading-[1.2] text-white">
+                  {post.headline}
+                </h3>
+                <p className="mt-1.5 text-[9px] text-white/70">{post.date}</p>
               </div>
             </a>
+          ))}
 
-            <div className="p-5 sm:p-7">
-              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-emerald-400">
-                Latest update
-              </p>
-              <h3 className="text-2xl font-bold leading-tight text-foreground sm:text-3xl">
-                {featuredPost.headline}
-              </h3>
-              <p className="mt-3 line-clamp-3 text-sm leading-6 text-muted-foreground">
-                {featuredPost.title}
-              </p>
-              <a
-                href={featuredPost.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-5 inline-flex items-center gap-1 border-b border-emerald-400 pb-1 text-sm font-semibold text-foreground transition-colors hover:text-emerald-400"
-              >
-                Read the update <ArrowUpRight size={15} />
-              </a>
-            </div>
-          </article>
-
-          <div className="flex flex-col gap-2" aria-label="Choose a featured update">
-            {featuredPosts.map((post, index) => (
-              <button
-                key={post.href}
-                type="button"
-                onClick={() => {
-                  setProgress(0);
-                  setActiveIndex(index);
-                }}
-                aria-pressed={activeIndex === index}
-                className={`group relative flex min-h-[76px] items-center gap-3 overflow-hidden rounded-xl border px-3 py-2.5 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 ${
-                  activeIndex === index
-                    ? 'border-emerald-400 bg-card'
-                    : 'border-border bg-card/50 hover:bg-card'
-                }`}
-              >
-                <img
-                  src={post.image}
-                  alt=""
-                  className={`h-12 w-[68px] shrink-0 rounded-md object-cover ${
-                    activeIndex === index ? '' : 'saturate-75'
-                  }`}
-                />
-                <span className="min-w-0 flex-1">
-                  <span className="block line-clamp-2 text-sm font-semibold leading-5 text-foreground">
-                    {post.headline}
-                  </span>
-                  <span className="mt-1 block text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-                    {post.date}
-                  </span>
-                </span>
-                <ArrowRight
-                  size={16}
-                  className={`shrink-0 transition-colors ${
-                    activeIndex === index ? 'text-emerald-400' : 'text-muted-foreground'
-                  }`}
-                />
-                {activeIndex === index && (
-                  <span
-                    aria-hidden="true"
-                    className="absolute inset-x-0 bottom-0 h-0.5 bg-emerald-400 transition-[width] ease-linear"
-                    style={{
-                      width: `${progress}%`,
-                      transitionDuration: `${UPDATE_INTERVAL_MS}ms`,
-                    }}
-                  />
-                )}
-              </button>
-            ))}
-
-            <Link
-              href="/impact"
-              className="mt-2 inline-flex min-h-11 items-center justify-between border-t border-border px-1 pt-3 text-sm font-semibold text-foreground transition-colors hover:text-emerald-400"
-            >
-              Explore all impact updates <ArrowUpRight size={16} />
-            </Link>
-          </div>
+          <Link
+            href="/impact"
+            className="flex h-[190px] w-[min(78vw,230px)] shrink-0 snap-start flex-col items-start justify-end rounded-md border border-white/15 bg-white/[0.04] p-4 text-sm font-semibold text-white transition-colors hover:bg-white/[0.08] sm:h-[205px] sm:w-[180px]"
+          >
+            Explore all stories
+            <ArrowUpRight size={16} className="mt-3 text-[#61d9b9]" />
+          </Link>
         </div>
       </div>
     </section>

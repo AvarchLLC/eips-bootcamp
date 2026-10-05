@@ -1,216 +1,184 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
+import { ArrowRight } from 'lucide-react';
 import { useSession } from '@/app/lib/auth-client';
-import { ArrowRight, BookOpen } from 'lucide-react';
-import { Button } from '../ui/Button';
 
-// Inline EIP book illustration
-function EIPBookIllustration() {
-  return (
-    <div className="relative flex items-center justify-center w-full h-full select-none pointer-events-none">
-      {/* Ambient glows */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-80 h-80 bg-emerald-500/8 rounded-full blur-3xl" />
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-40 h-40 bg-emerald-400/6 rounded-full blur-2xl" />
+const events = [
+  {
+    day: '14',
+    month: 'OCT',
+    title: 'Ethereum 101 Workshop',
+    venue: 'Heritage Institute of Technology, Kolkata',
+    color: 'bg-[#f2bd40]',
+  },
+  {
+    day: '28',
+    month: 'OCT',
+    title: 'EIPs and Governance Session',
+    venue: 'Academy of Technology, Kolkata',
+    color: 'bg-[#ded9f5]',
+  },
+  {
+    day: '09',
+    month: 'NOV',
+    title: 'Hands-on Builder Day',
+    venue: 'Techno Main Salt Lake, Kolkata',
+    color: 'bg-[#e2eee4]',
+  },
+];
 
-      {/* Particle dots */}
-      {[
-        { top: '8%', left: '20%', size: 3, delay: '0s', opacity: 0.6 },
-        { top: '15%', right: '15%', size: 2, delay: '0.5s', opacity: 0.4 },
-        { top: '40%', left: '5%', size: 4, delay: '1s', opacity: 0.5 },
-        { top: '60%', right: '8%', size: 2, delay: '0.3s', opacity: 0.35 },
-        { top: '20%', left: '55%', size: 3, delay: '0.8s', opacity: 0.45 },
-      ].map((p: { top: string; left?: string; right?: string; size: number; delay: string; opacity: number }, i: number) => (
-        <div
-          key={i}
-          className="absolute rounded-full bg-emerald-400 animate-pulse"
-          style={{
-            top: p.top, left: p.left, right: p.right,
-            width: p.size, height: p.size, opacity: p.opacity,
-            animationDelay: p.delay,
-          }}
-        />
-      ))}
-
-      <div className="relative z-10 flex flex-col items-center">
-        {/* Ethereum crystal */}
-        <svg
-          width="140"
-          height="170"
-          viewBox="0 0 120 160"
-          className="mb-[-20px] drop-shadow-[0_0_40px_rgba(16,185,129,0.55)]"
-          style={{ filter: 'drop-shadow(0 0 30px rgba(16,185,129,0.5))' }}
-        >
-          <defs>
-            <linearGradient id="hTop1" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#6ee7b7" stopOpacity="0.95" />
-              <stop offset="100%" stopColor="#059669" stopOpacity="0.75" />
-            </linearGradient>
-            <linearGradient id="hTop2" x1="1" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#34d399" stopOpacity="0.9" />
-              <stop offset="100%" stopColor="#065f46" stopOpacity="0.95" />
-            </linearGradient>
-            <linearGradient id="hBot1" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#059669" stopOpacity="0.8" />
-              <stop offset="100%" stopColor="#022c22" stopOpacity="0.98" />
-            </linearGradient>
-            <linearGradient id="hBot2" x1="1" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#047857" stopOpacity="0.65" />
-              <stop offset="100%" stopColor="#022c22" stopOpacity="0.98" />
-            </linearGradient>
-          </defs>
-          <polygon points="60,5 100,65 60,80 20,65" fill="url(#hTop1)" />
-          <polygon points="60,5 20,65 60,80" fill="url(#hTop2)" />
-          <polygon points="60,5 100,65 60,80" fill="rgba(16,185,129,0.15)" />
-          <polygon points="60,80 100,65 60,155" fill="url(#hBot2)" />
-          <polygon points="60,80 20,65 60,155" fill="url(#hBot1)" />
-          <line x1="20" y1="65" x2="100" y2="65" stroke="#34d399" strokeWidth="0.5" opacity="0.4" />
-        </svg>
-
-        {/* Open book */}
-        <div className="relative">
-          {/* Book shadow glow */}
-          <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-56 h-6 bg-emerald-500/15 blur-xl rounded-full" />
-          <svg width="340" height="190" viewBox="0 0 340 190" className="relative z-10">
-            <defs>
-              <linearGradient id="pageL" x1="1" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#1a1f1e" />
-                <stop offset="100%" stopColor="#111614" />
-              </linearGradient>
-              <linearGradient id="pageR" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="#1c211f" />
-                <stop offset="100%" stopColor="#111614" />
-              </linearGradient>
-              <linearGradient id="spine" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#0d1412" />
-                <stop offset="100%" stopColor="#1a2420" />
-              </linearGradient>
-              <linearGradient id="cover" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#0a1210" />
-                <stop offset="100%" stopColor="#050a08" />
-              </linearGradient>
-            </defs>
-
-            {/* Book body shadow */}
-            <ellipse cx="170" cy="188" rx="130" ry="6" fill="rgba(0,0,0,0.4)" />
-
-            {/* Book cover base */}
-            <path d="M30,40 L170,20 L310,40 L310,175 L170,185 L30,175 Z" fill="url(#cover)" />
-
-            {/* Left page */}
-            <path d="M170,25 L35,43 L35,172 L170,182 Z" fill="url(#pageL)" stroke="#2a3530" strokeWidth="0.5" />
-            {/* Right page */}
-            <path d="M170,25 L305,43 L305,172 L170,182 Z" fill="url(#pageR)" stroke="#2a3530" strokeWidth="0.5" />
-
-            {/* Spine line */}
-            <line x1="170" y1="25" x2="170" y2="182" stroke="#3a4a44" strokeWidth="1.5" />
-
-            {/* Left page content — EIP-1559 */}
-            <text x="100" y="72" textAnchor="middle" fill="#94a3a0" fontSize="11" fontWeight="700" fontFamily="system-ui">EIP-1559</text>
-            <text x="100" y="86" textAnchor="middle" fill="#6b7e79" fontSize="8.5" fontFamily="system-ui">Fee market change</text>
-            <line x1="55" y1="94" x2="145" y2="94" stroke="#2a3a36" strokeWidth="0.5" />
-            <text x="100" y="108" textAnchor="middle" fill="#4d6460" fontSize="7.5" fontFamily="system-ui" style={{ maxWidth: '90px' }}>Introduces a base fee for</text>
-            <text x="100" y="119" textAnchor="middle" fill="#4d6460" fontSize="7.5" fontFamily="system-ui">transactions and burns it,</text>
-            <text x="100" y="130" textAnchor="middle" fill="#4d6460" fontSize="7.5" fontFamily="system-ui">improving the economic</text>
-            <text x="100" y="141" textAnchor="middle" fill="#4d6460" fontSize="7.5" fontFamily="system-ui">model of Ethereum.</text>
-            {/* Final badge */}
-            <rect x="74" y="152" width="52" height="14" rx="7" fill="rgba(16,185,129,0.15)" stroke="rgba(16,185,129,0.3)" strokeWidth="0.5" />
-            <text x="100" y="162" textAnchor="middle" fill="#10b981" fontSize="7.5" fontWeight="700" fontFamily="system-ui">Final</text>
-
-            {/* Right page content — EIP-4844 */}
-            <text x="240" y="72" textAnchor="middle" fill="#94a3a0" fontSize="11" fontWeight="700" fontFamily="system-ui">EIP-4844</text>
-            <text x="240" y="86" textAnchor="middle" fill="#6b7e79" fontSize="8.5" fontFamily="system-ui">Proto-danksharding</text>
-            <line x1="195" y1="94" x2="285" y2="94" stroke="#2a3a36" strokeWidth="0.5" />
-            <text x="240" y="108" textAnchor="middle" fill="#4d6460" fontSize="7.5" fontFamily="system-ui">Introduces blob-carrying</text>
-            <text x="240" y="119" textAnchor="middle" fill="#4d6460" fontSize="7.5" fontFamily="system-ui">transactions to scale</text>
-            <text x="240" y="130" textAnchor="middle" fill="#4d6460" fontSize="7.5" fontFamily="system-ui">Ethereum with rollups.</text>
-            {/* Final badge */}
-            <rect x="214" y="152" width="52" height="14" rx="7" fill="rgba(16,185,129,0.15)" stroke="rgba(16,185,129,0.3)" strokeWidth="0.5" />
-            <text x="240" y="162" textAnchor="middle" fill="#10b981" fontSize="7.5" fontWeight="700" fontFamily="system-ui">Final</text>
-
-            {/* Page curl hint */}
-            <path d="M35,170 Q52,175 35,172" fill="#0f1a17" opacity="0.5" />
-            <path d="M305,170 Q288,175 305,172" fill="#0f1a17" opacity="0.5" />
-          </svg>
-        </div>
-      </div>
-    </div>
-  );
-}
+const campuses = [
+  {
+    name: 'Hooghly Engineering & Technology College',
+    logo: '/brand/partners/hetc.png',
+  },
+  {
+    name: 'Heritage Institute of Technology',
+    logo: '/brand/partners/heritage.png',
+  },
+  {
+    name: 'MCKV Institute of Engineering',
+    logo: '/brand/partners/mckvie.jpg',
+  },
+  {
+    name: 'Techno Main Salt Lake',
+    logo: '/brand/partners/tmsl.png',
+  },
+];
 
 export function HeroSection() {
   const { data: session } = useSession();
   const isSignedIn = !!session?.user;
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-background pt-16">
-      {/* Background */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
-        <div className="absolute -top-40 left-1/4 w-[600px] h-[600px] bg-emerald-500/4 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 -right-40 w-[400px] h-[400px] bg-emerald-500/3 rounded-full blur-3xl" />
-        {/* Dot grid */}
-        <div
-          className="absolute inset-0 opacity-[0.025]"
-          style={{
-            backgroundImage: 'radial-gradient(circle at 1px 1px, #10b981 1px, transparent 0)',
-            backgroundSize: '36px 36px',
-          }}
-        />
-      </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20 lg:py-0">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-6 items-center min-h-[calc(100vh-64px)]">
-
-          {/* Left — text */}
-          <div className="flex flex-col justify-center">
-            <p className="text-emerald-400 text-sm font-semibold mb-5 tracking-wide">
-              Understand Ethereum. Shape the Future.
-            </p>
-
-            <h1 className="font-grotesk font-black leading-none mb-6" style={{ fontSize: 'clamp(2.8rem, 5vw, 4.2rem)', letterSpacing: '-0.03em', lineHeight: 1.02 }}>
-              Learn Ethereum.<br />
-              Understand <span className="text-emerald-400">EIPs</span>.<br />
-              Build the Future.
+    <section className="relative overflow-hidden bg-[#f7f6f1] text-[#171a18]">
+      <div className="mx-auto w-full max-w-7xl px-5 pb-4 pt-4 sm:px-8 lg:px-12">
+        <div className="grid items-center gap-4 sm:items-start sm:grid-cols-[0.85fr_1.15fr] sm:gap-4 lg:gap-8">
+          <div className="relative z-10 max-w-xl sm:pt-10">
+            <h1
+              className="text-[clamp(3rem,6.8vw,6.5rem)] font-black leading-[0.9] tracking-[-0.065em]"
+              style={{ fontFamily: 'var(--font-inter), sans-serif', fontWeight: 900 }}
+            >
+              <span className="block">Ethereum,</span>
+              <span className="relative mt-1 inline-block whitespace-nowrap text-[#08634f]">
+                on campus.
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 360 24"
+                  className="absolute -bottom-4 left-[17%] w-[82%] overflow-visible"
+                  fill="none"
+                >
+                  <path
+                    d="M3 16C78 5 189 3 353 9M14 21C108 13 236 9 326 13"
+                    stroke="#e8b443"
+                    strokeLinecap="round"
+                    strokeWidth="4"
+                  />
+                </svg>
+              </span>
             </h1>
 
-            <p className="text-muted-foreground text-base leading-relaxed mb-8 max-w-[480px]">
-              ETHShala is your gateway to the world of Ethereum Improvement Proposals, core concepts, and the ideas shaping the Ethereum ecosystem.
+            <p className="mt-5 max-w-sm text-[15px] leading-[1.45] text-[#363936]">
+              Bringing Ethereum learning, events
+              <br className="hidden sm:block" /> and communities to students.
             </p>
 
-            {/* CTAs */}
-            <div className="flex flex-wrap items-center gap-4 mb-10">
-              <Button
-                href={isSignedIn ? '/dashboard' : '/sign-up'}
-                size="lg"
-                rightIcon={<ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />}
-                className="group"
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <Link
+                href="/impact"
+                className="group inline-flex min-h-11 items-center gap-2.5 rounded-md bg-[#064f40] px-5 text-[13px] font-medium text-white transition-colors hover:bg-[#043e33]"
               >
-                {isSignedIn ? 'Continue Learning' : 'Start Learning'}
-              </Button>
-              {!isSignedIn && (
-                <div className="text-sm text-muted-foreground leading-snug">
-                  Sign in or create an account<br />
-                  to continue your journey
-                </div>
-              )}
+                Partner with us
+                <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
+              </Link>
+              <Link
+                href={isSignedIn ? '/dashboard/learning' : '/sign-up'}
+                className="inline-flex min-h-11 items-center rounded-md border border-[#bfc0bb] bg-white/40 px-5 text-[13px] font-medium text-[#1c201e] transition-colors hover:bg-white"
+              >
+                Explore programs
+              </Link>
             </div>
 
-            {/* Value prop bar */}
-            <div className="flex items-center gap-3 bg-white/3 border border-border rounded-xl px-4 py-3 max-w-[460px]">
-              <BookOpen size={16} className="text-emerald-400 flex-shrink-0" />
-              <p className="text-muted-foreground text-sm">
-                From beginner to contributor - learn, explore, and grow with Ethereum.
+            <div className="mt-3 flex items-center gap-3">
+              <div aria-hidden="true" className="flex -space-x-2">
+                {[0, 1, 2, 3].map((item) => (
+                  <span
+                    key={item}
+                    className="h-7 w-7 rounded-full border-2 border-[#f7f6f1] bg-gradient-to-br from-[#c8c7bf] to-[#898c83]"
+                  />
+                ))}
+              </div>
+              <p className="text-xs leading-[1.35] text-[#363936]">
+                <span className="block text-sm font-semibold text-[#1d211f]">200+</span>
+                students reached across campuses
               </p>
             </div>
           </div>
 
-          {/* Right — illustration */}
-          <div className="hidden lg:flex items-center justify-center h-[560px]">
-            <EIPBookIllustration />
+          <div className="relative mx-auto h-[360px] w-full max-w-[650px] sm:h-[clamp(300px,36vw,410px)]">
+            <div
+              aria-label="Reserved space for a campus event photograph"
+              className="absolute inset-x-4 top-0 h-[88%] bg-[#e5e3dc] shadow-[0_18px_50px_rgba(34,37,32,0.12)] sm:inset-x-8"
+            />
+            <div
+              aria-hidden="true"
+              className="absolute right-0 top-[43%] h-[25%] w-[28%] rotate-[-7deg] border-[5px] border-[#f7f6f1] bg-[#d2d0c8] shadow-lg"
+            />
+
+            <div className="absolute right-0 top-[45%] z-10 flex w-[88%] flex-col gap-1 sm:right-1 sm:w-[83%] sm:top-[45%]">
+              {events.map((event) => (
+                <div
+                  key={event.title}
+                  className={`${event.color} flex min-h-[44px] items-center gap-2 rounded-lg px-3 py-1.5 shadow-[0_4px_12px_rgba(30,32,29,0.14)] sm:min-h-[50px] sm:gap-3 sm:px-4`}
+                >
+                  <div className="w-8 shrink-0 text-center leading-none">
+                    <span className="block text-base font-bold">{event.day}</span>
+                    <span className="mt-1 block text-[8px] font-semibold">{event.month}</span>
+                  </div>
+                  <div className="min-w-0 flex-1 border-l border-black/10 pl-2">
+                    <p className="truncate text-[10px] font-semibold leading-tight sm:text-xs">
+                      {event.title}
+                    </p>
+                    <p className="mt-1 truncate text-[8px] leading-tight sm:text-[9px]">
+                      {event.venue}
+                    </p>
+                  </div>
+                  <ArrowRight size={14} className="shrink-0" />
+                </div>
+              ))}
+            </div>
           </div>
+        </div>
+
+        <div className="py-4 sm:py-5">
+          <p className="mb-2 text-[9px] font-semibold uppercase tracking-[0.2em] text-[#666963]">
+            Trusted by campuses across India
+          </p>
+          <div className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-5">
+            {campuses.map((campus) => (
+              <div key={campus.name} className="flex min-h-10 items-center gap-3">
+                <Image
+                  src={campus.logo}
+                  alt={`${campus.name} logo`}
+                  width={48}
+                  height={48}
+                  className="h-10 w-10 shrink-0 object-contain"
+                />
+                <p className="text-xs font-semibold leading-tight text-[#323530]">
+                  {campus.name}
+                </p>
+              </div>
+            ))}
+            <div className="hidden items-center text-[10px] leading-tight text-[#51544e] sm:flex">
+              and more
+              <br />
+              campuses...
+            </div>
           </div>
-          </div>
-          </section>
-          );
-          }
+        </div>
+      </div>
+    </section>
+  );
+}
