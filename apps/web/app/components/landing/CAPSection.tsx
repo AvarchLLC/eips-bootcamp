@@ -124,15 +124,15 @@ export function CAPSection() {
             </div>
 
             <div 
-              className={`absolute top-[50px] lg:top-[120px] left-1/2 transition-all duration-[1200ms] ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+              className={`absolute top-0 lg:top-[40px] left-1/2 transition-all duration-[1200ms] ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
                 isVisible 
-                  ? 'translate-y-0 -translate-x-1/2 rotate-[12deg] scale-[1.2] md:scale-[1.45] lg:scale-[1.7] xl:scale-[1.95]' 
-                  : 'translate-y-[-800px] -translate-x-1/2 rotate-[0deg] scale-[1.2] md:scale-[1.45] lg:scale-[1.7] xl:scale-[1.95]'
+                  ? 'translate-y-[50px] lg:translate-y-[150px] -translate-x-1/2 rotate-[12deg] opacity-100 scale-[1.1] md:scale-[1.2] lg:scale-[1.3] xl:scale-[1.4]' 
+                  : 'translate-y-[-200px] -translate-x-1/2 rotate-[0deg] opacity-0 scale-[0.9]'
               }`}
             >
               {/* ID Card Wrapper */}
               <div className="relative group flex justify-center">
-                <img src="/id-card.png" alt="ID Card" className="w-[450px] sm:w-[550px] lg:w-[700px] xl:w-[800px] h-auto object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.4)] z-50" />
+                <img src="/id-card.png" alt="ID Card" className="w-[450px] sm:w-[550px] lg:w-[600px] xl:w-[700px] h-auto object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.4)] z-50" />
               </div>
             </div>
           </div>
