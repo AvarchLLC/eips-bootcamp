@@ -7,6 +7,7 @@ import { sendEmail } from "./email";
 export const auth = betterAuth({
   trustedOrigins: [
     'http://localhost:3000',
+    'http://localhost:3001',
     'http://127.0.0.1:3000',
     'http://192.168.1.3:3000',
     'http://192.168.0.104:3000',
@@ -56,5 +57,10 @@ export const auth = betterAuth({
   ],
   advanced: {
      // use db default
+  },
+  onAPIError: {
+    onError: (error, ctx) => {
+      console.error("Better Auth API Error:", error, ctx);
+    }
   }
 });

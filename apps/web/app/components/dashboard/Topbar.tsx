@@ -235,7 +235,7 @@ export function Topbar({ onMobileMenuOpen }: TopbarProps) {
             <span className="text-foreground text-sm font-semibold leading-none">
               {user?.name ?? 'User'}
             </span>
-            <span className="text-muted-foreground text-[11px] mt-1 font-medium tracking-wide uppercase">{user?.role ?? 'Student'}</span>
+            <span className="text-muted-foreground text-[11px] mt-1 font-medium tracking-wide uppercase">{(user as any)?.role ?? 'Student'}</span>
           </div>
           <Link href="/dashboard/profile" className="w-9 h-9 rounded-full ring-2 ring-emerald-500/30 overflow-hidden bg-emerald-500/10 flex items-center justify-center hover:ring-emerald-400 transition-all">
             {user?.image ? (

@@ -128,14 +128,12 @@ export const whyCards: WhyCard[] = [
 ];
 
 export const navLinks = [
-  { label: 'Home', href: '/' },
-  // { label: 'Featured', href: '/#featured' },
-  // { label: 'EIPs', href: '/#eips' },
-  // { label: 'Governance', href: '/#governance' },
+  { label: 'Learn', href: '/dashboard/learning' },
+  { label: 'Programs', href: '/#programs' },
+  { label: 'Events', href: '/#events' },
+  { label: 'CAP', href: '/impact' },
   { label: 'Community', href: '/#community' },
-  { label: 'Impact', href: '/impact' },
-  { label: 'Dashboard', href: '/dashboard' },
-  { label: 'About Us', href: '/about' },
+  { label: 'About', href: '/about' },
 ];
 
 export const footerLinks = {
