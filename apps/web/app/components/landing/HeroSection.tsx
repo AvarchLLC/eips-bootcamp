@@ -97,21 +97,21 @@ export function HeroSection() {
                 Partner with us
                 <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
               </Link>
-              <Link
+              {/* <Link
                 href={isSignedIn ? '/dashboard/learning' : '/sign-up'}
                 className="inline-flex min-h-[48px] items-center rounded-lg border-2 border-[#dcdad3] bg-transparent px-6 text-[15px] font-semibold text-[#1c201e] transition-colors hover:bg-black/5"
               >
                 Explore programs
-              </Link>
+              </Link> */}
             </div>
 
             <div className="mt-10 flex items-center gap-4 relative">
               <div aria-hidden="true" className="flex -space-x-3">
-                {[1, 2, 3, 4].map((item) => (
+                {['Arijit.jpg', 'dhan.jpg', 'rajdeep.jpg', 'Subhadeep.jpeg'].map((avatar) => (
                   <img
-                    key={item}
-                    src={`/avatar-${item}.jpg`}
-                    alt={`Student ${item}`}
+                    key={avatar}
+                    src={`/avatars/${avatar}`}
+                    alt={avatar.split('.')[0]}
                     className="h-10 w-10 rounded-full border-[3px] border-[#fcfbf7] shadow-sm object-cover bg-gradient-to-br from-[#c8c7bf] to-[#898c83]"
                   />
                 ))}
@@ -158,7 +158,7 @@ export function HeroSection() {
               
               {/* Main Image */}
               <div className="absolute inset-0 bg-[#e3dfd3] border-[8px] border-white shadow-xl transform rotate-[2deg] flex items-center justify-center overflow-hidden">
-                <img src="/hero-main.jpg" alt="Main Event" className="w-full h-full object-cover" />
+                <img src="/events/event_images/IMG_4213.png" alt="Main Event" className="w-full h-full object-cover" />
               </div>
               
               {/* Tape piece top left */}
@@ -169,7 +169,7 @@ export function HeroSection() {
 
               {/* Overlapping small B&W photo */}
               <div className="absolute top-[25%] -right-8 w-[240px] h-[140px] bg-[#cfccc2] border-[6px] border-white shadow-2xl transform rotate-[-6deg] hidden xl:flex items-center justify-center z-10 overflow-hidden">
-                <img src="/hero-eip.jpg" alt="EIP Session" className="w-full h-full object-cover grayscale sepia-[0.3]" />
+                <img src="/events/event_images/IMG_4217.png" alt="EIP Session" className="w-full h-full object-cover grayscale sepia-[0.3]" />
               </div>
 
               {/* Event Cards Overlapping Bottom Right */}

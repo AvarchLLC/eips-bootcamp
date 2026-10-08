@@ -66,14 +66,14 @@ export function CAPSection() {
           <div className="relative mx-auto w-full max-w-[650px] h-[400px]">
             {/* Left Polaroid */}
             <div className="absolute left-[5%] top-[10%] w-[320px] lg:w-[380px] h-[220px] lg:h-[260px] bg-[#1a2b25] border-[12px] border-white shadow-2xl transform rotate-[4deg] z-10 flex items-center justify-center overflow-hidden">
-              <img src="/cap-image-1.jpg" alt="Hands-on learning" className="w-full h-full object-cover" />
+              <img src="/events/event_images/InnovoCon2_2.jpeg" alt="Hands-on learning" className="w-full h-full object-cover" />
               {/* Tape */}
               <div className="absolute -top-6 left-[40%] w-24 h-8 bg-white/70 backdrop-blur-sm shadow-sm transform rotate-[-4deg]" />
             </div>
             
             {/* Right Polaroid */}
             <div className="absolute right-[-5%] top-[25%] w-[280px] lg:w-[320px] h-[200px] lg:h-[220px] bg-[#16241e] border-[10px] border-white shadow-xl transform rotate-[12deg] z-0 flex items-center justify-center overflow-hidden">
-              <img src="/cap-image-2.jpg" alt="Events and community" className="w-full h-full object-cover" />
+              <img src="/events/event_images/InnovoCon2_1.jpeg" alt="Events and community" className="w-full h-full object-cover" />
               {/* Tape */}
               <div className="absolute -top-4 left-[10%] w-20 h-6 bg-[#93cba3]/80 backdrop-blur-sm shadow-sm transform rotate-[-15deg]" />
             </div>
