@@ -20,7 +20,7 @@ export function Navbar({ className, showNavLinks = true,}: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 ${className ?? ""}`}
+    <header className={`fixed top-0 left-0 right-0 z-50 bg-background border-b border-border shadow-sm ${className ?? ""}`}
      >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center h-16 gap-8">
