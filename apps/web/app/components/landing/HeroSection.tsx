@@ -7,26 +7,26 @@ import { useSession } from '@/app/lib/auth-client';
 
 const events = [
   {
-    day: '14',
-    month: 'OCT',
-    title: 'Ethereum 101 Workshop',
-    venue: 'Heritage Institute of Technology, Kolkata',
+    day: '27',
+    month: 'AUG',
+    title: 'Ethereum, EIPs, and The Future of Web3 ecosystem',
+    venue: 'Hooghly Engineering & Technology College',
     color: 'bg-[#ffd359]',
   },
   {
-    day: '28',
-    month: 'OCT',
-    title: 'EIPs and Governance Session',
-    venue: 'Academy of Technology, Kolkata',
+    day: '27',
+    month: 'SEPT',
+    title: 'InnovoCon Hacknex 2.0',
+    venue: 'Hackathon, Kolkata',
     color: 'bg-[#dfdbfc]',
   },
-  {
-    day: '09',
-    month: 'NOV',
-    title: 'Hands-on Builder Day',
-    venue: 'Techno Main Salt Lake, Kolkata',
-    color: 'bg-[#d8f0dd]',
-  },
+  // {
+  //   day: '09',
+  //   month: 'NOV',
+  //   title: 'Hands-on Builder Day',
+  //   venue: 'Techno Main Salt Lake, Kolkata',
+  //   color: 'bg-[#d8f0dd]',
+  // },
 ];
 
 const campuses = [
