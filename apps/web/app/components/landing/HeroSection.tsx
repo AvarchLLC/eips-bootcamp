@@ -20,13 +20,13 @@ const events = [
     venue: 'Hackathon, Kolkata',
     color: 'bg-[#dfdbfc]',
   },
-  // {
-  //   day: '09',
-  //   month: 'NOV',
-  //   title: 'Hands-on Builder Day',
-  //   venue: 'Techno Main Salt Lake, Kolkata',
-  //   color: 'bg-[#d8f0dd]',
-  // },
+  {
+    day: '08',
+    month: 'OCT',
+    title: 'WEB3 Hands-on Session',
+    venue: 'MCKV Institute of Engineering',
+    color: 'bg-[#d8f0dd]',
+  },
 ];
 
 const campuses = [
