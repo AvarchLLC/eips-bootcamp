@@ -26,18 +26,18 @@ import { Web3Provider } from "./components/Web3Provider";
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.BETTER_AUTH_URL || "https://www.ethshala.com"),
   title: {
-    default: "ETHShala | Master Ethereum Improvement Proposals",
+    default: "ETHShala | Ethereum Learning, Partnerships, Events & Communities",
     template: "%s | ETHShala",
   },
-  description: "Learn, contribute, and master the core of Ethereum. ETHShala provides a gamified path to mastering EIPs through structured modules and community engagement.",
-  keywords: ["Ethereum", "EIP", "Blockchain", "Web3", "Learning", "Smart Contracts", "Governance"],
+  description: "ETHShala brings Ethereum learning to campuses through hands-on workshops, community events, structured learning modules, and student-led initiatives.",
+  keywords: [ "ETHShala","Ethereum Education","Ethereum Learning","Blockchain Education","Web3 Education","Ethereum Workshops","Campus Partnerships","Web3 Community","Smart Contracts","Ethereum Improvement Proposals","EIP Learning","Campus Ambassador Program",],
   authors: [{ name: "ETHShala Team" }],
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://www.ethshala.com",
-    title: "ETHShala | Master Ethereum Improvement Proposals",
-    description: "Learn, contribute, and master the core of Ethereum through our gamified EIP learning platform.",
+    title: "ETHShala | Ethereum Learning, Partnerships, Events & Communities",
+    description: "Bringing Ethereum learning, events, and communities to students through campus partnerships, hands-on workshops, and structured learning.",
     siteName: "ETHShala",
     images: [
       {
@@ -50,8 +50,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "ETHShala | Master Ethereum Improvement Proposals",
-    description: "Master the core of Ethereum with ETHShala's gamified learning platform.",
+    title: "ETHShala | Ethereum Learning, Partnerships, Events & Communities",
+    description: "Discover Ethereum through campus workshops, hands-on learning, community events, and student-led initiatives.",
     images: ["https://www.ethshala.com/brand/og-image.png"],
     creator: "@ETHShala",
   },
