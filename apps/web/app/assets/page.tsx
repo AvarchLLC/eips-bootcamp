@@ -76,7 +76,7 @@ export default function AssetsPage() {
                 <Badge variant="neutral" className="text-slate-900 !border !border-border bg-slate-50 dark:bg-white/5 dark:text-white">Light Theme Usage</Badge>
               </div>
               <div className="h-40 flex items-center justify-center bg-slate-50">
-                <div className="flex items-center gap-3 scale-125 pointer-events-none">
+                <div className="flex items-center gap-0 scale-125 pointer-events-none">
                   <div className="relative bottom-1.5 shrink-0">
                     <ThemedLogoGif
                       alt="ETHShala"
@@ -102,7 +102,7 @@ export default function AssetsPage() {
                 <Badge variant="neutral" className="bg-slate-50 text-slate-900 !border !border-border dark:text-white dark:bg-white/5">Dark Theme Usage</Badge>
               </div>
               <div className="h-40 flex items-center justify-center bg-[#121413]">
-                <div className="flex items-center gap-3 scale-125 pointer-events-none">
+                <div className="flex items-center gap-0 scale-125 pointer-events-none">
                   <div className="relative bottom-1.5 shrink-0">
                     <ThemedLogoGif
                       alt="ETHShala"
