@@ -4,12 +4,12 @@
 
 import { Navbar } from '../components/landing/Navbar';
 import { Footer } from '../components/landing/Footer';
-import { CommunityHero } from '../components/impact/CommunityHero';
-import { EventsSection } from '../components/impact/EventsSection';
-import { MediaSection } from '../components/impact/MediaSection';
-import { SocialSection } from '../components/impact/SocialSection';
-import { EventImageShowcase } from '../components/impact/EventImageShowcase';
-import { CampusNetworkSection } from '../components/impact/CampusNetworkSection';
+import { CommunityHero } from '../components/community/CommunityHero';
+import { EventsSection } from '../components/community/EventsSection';
+import { MediaSection } from '../components/community/MediaSection';
+import { SocialSection } from '../components/community/SocialSection';
+import { EventImageShowcase } from '../components/community/EventImageShowcase';
+import { CampusNetworkSection } from '../components/community/CampusNetworkSection';
 import { ArrowDownRight, Globe, Users } from 'lucide-react';
 
 export default function CommunityPage() {
