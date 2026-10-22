@@ -130,7 +130,7 @@ export function Featured() {
           ))}
 
           <Link
-            href="/impact"
+            href="/community"
             className="group relative isolate flex h-[280px] w-[280px] shrink-0 snap-start flex-col items-start justify-end rounded-xl overflow-hidden p-6 text-lg font-bold text-white transition-colors sm:h-[320px] sm:w-[320px] lg:w-[calc((100%-20px)/2)]"
           >
             <img 

@@ -110,13 +110,13 @@ export function ImpactPartnerSections() {
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
               <Link
-                href="/impact"
+                href="/community"
                 className="group inline-flex min-h-[52px] items-center gap-3 rounded-lg bg-[#0a1a16] px-7 text-[15px] font-semibold text-white transition-colors hover:bg-[#15382f] shadow-lg"
               >
                 Partner with ETHShala <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
               </Link>
               <Link
-                href="/impact"
+                href="/community"
                 className="group inline-flex min-h-[52px] items-center gap-3 rounded-lg border-2 border-[#e5e7eb] bg-white px-7 text-[15px] font-semibold text-[#111] transition-colors hover:border-[#d1d5db] hover:bg-[#f9fafb]"
               >
                 Talk to us <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />

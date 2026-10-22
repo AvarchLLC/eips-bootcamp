@@ -128,11 +128,12 @@ export const whyCards: WhyCard[] = [
 ];
 
 export const navLinks = [
+  { label: 'Home', href: '/' },
   { label: 'Learn', href: '/dashboard' },
   // { label: 'Programs', href: '/#programs' },
-  { label: 'Events', href: '/impact/#events' },
+  // { label: 'Events', href: '/community/#events' },
   { label: 'CAP', href: 'dashboard/cap' },
-  { label: 'Community', href: '/impact' },
+  { label: 'Community', href: '/community' },
   { label: 'About', href: '/about' },
 ];
 

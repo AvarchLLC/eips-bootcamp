@@ -20,13 +20,13 @@ const events = [
     venue: 'Hackathon, Kolkata',
     color: 'bg-[#dfdbfc]',
   },
-  // {
-  //   day: '09',
-  //   month: 'NOV',
-  //   title: 'Hands-on Builder Day',
-  //   venue: 'Techno Main Salt Lake, Kolkata',
-  //   color: 'bg-[#d8f0dd]',
-  // },
+  {
+    day: '08',
+    month: 'OCT',
+    title: 'WEB3 Hands-on Session',
+    venue: 'MCKV Institute of Engineering',
+    color: 'bg-[#d8f0dd]',
+  },
 ];
 
 const campuses = [
@@ -91,7 +91,7 @@ export function HeroSection() {
 
             <div className="mt-8 flex flex-wrap items-center gap-4">
               <Link
-                href="/impact"
+                href="/community"
                 className="group inline-flex min-h-[48px] items-center gap-3 rounded-lg bg-[#064a3a] px-6 text-[15px] font-semibold text-white transition-colors hover:bg-[#043328] shadow-md"
               >
                 Partner with us

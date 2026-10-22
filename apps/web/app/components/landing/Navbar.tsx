@@ -11,9 +11,10 @@ import { Logo } from '../ui/Logo';
 interface NavbarProps {
   className?: string;
   showNavLinks?: boolean;
+  showThemeToggle?: boolean;
 }
 
-export function Navbar({ className, showNavLinks = true,}: NavbarProps) {
+export function Navbar({ className, showNavLinks = true, showThemeToggle = true }: NavbarProps) {
   const { data: session } = useSession();
   const user = session?.user;
   const isSignedIn = !!user;
@@ -60,7 +61,7 @@ export function Navbar({ className, showNavLinks = true,}: NavbarProps) {
 
           {/* Desktop right */}
           <div className="hidden lg:flex items-center gap-3 ml-auto">
-            <ThemeToggle />
+            {showThemeToggle && <ThemeToggle />}
             {isSignedIn ? (
               <>
                 <Link
@@ -97,7 +98,7 @@ export function Navbar({ className, showNavLinks = true,}: NavbarProps) {
 
           {/* Mobile right */}
           <div className="lg:hidden flex items-center gap-3 ml-auto">
-            <ThemeToggle />
+            {showThemeToggle && <ThemeToggle />}
             <button
               className="text-muted-foreground hover:text-foreground p-1.5 transition-colors"
               onClick={() => setMobileOpen(!mobileOpen)}

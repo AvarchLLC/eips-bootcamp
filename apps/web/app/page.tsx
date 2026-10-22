@@ -10,7 +10,10 @@ import { ImpactPartnerSections } from './components/landing/ImpactPartnerSection
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Navbar className=" bg-background/90 backdrop-blur-xl border-b border-border"/>
+      <Navbar
+        className="dark bg-background/90 backdrop-blur-xl border-b border-border"
+        showThemeToggle={false}
+      />
       <main className="mt-16">
         <HeroSection />
         <CAPSection />
@@ -18,7 +21,9 @@ export default function HomePage() {
         <LearningSection />
         <ImpactPartnerSections />
       </main>
-      <Footer />
+      <div className="dark">
+        <Footer />
+      </div>
     </div>
   );
 }
