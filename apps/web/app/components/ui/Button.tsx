@@ -5,13 +5,14 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
   size?: 'sm' | 'md' | 'lg' | 'icon';
   href?: string;
+  download?: boolean | string;
   isLoading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className = '', variant = 'primary', size = 'md', href, isLoading, leftIcon, rightIcon, children, ...props }, ref) => {
+  ({ className = '', variant = 'primary', size = 'md', href, download, isLoading, leftIcon, rightIcon, children, ...props }, ref) => {
     const baseStyles = 'inline-flex items-center justify-center gap-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]';
     
     const variants = {
@@ -46,6 +47,14 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     );
 
     if (href) {
+      if (download !== undefined) {
+        return (
+          <a href={href} download={download || undefined} className={combinedStyles}>
+            {content}
+          </a>
+        );
+      }
+
       return (
         <Link href={href} className={combinedStyles}>
           {content}
