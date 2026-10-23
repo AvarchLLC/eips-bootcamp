@@ -316,13 +316,19 @@ export default function AboutPage() {
             <div className="space-y-4">
               <div className="p-5 rounded-2xl bg-muted/40 border border-border hover:border-primary/40">
                 <Link target="_blank" className="flex items-center gap-6" href="https://etherworld.co/">
-                <div className="w-16 h-16 rounded-full bg-muted border border-border shrink-0 overflow-hidden relative">
-                <Image
-                  src="/brand/partners/ew.png"
-                  alt="Profile"
-                  fill
-                  className="object-cover"
-                />
+                <div className="relative h-20 w-40 shrink-0">
+                  <Image
+                    src="/brand/partners/EtherWorld-horizontal-dark.png"
+                    alt="EtherWorld"
+                    fill
+                    className="object-cover dark:hidden"
+                  />
+                  <Image
+                    src="/brand/partners/EtherWorld-horizontal-light.png"
+                    alt="EtherWorld"
+                    fill
+                    className="hidden object-cover dark:block"
+                  />
                 </div>
                 <div>
                   <h4 className="font-bold text-sm mb-1">EtherWorld</h4>
