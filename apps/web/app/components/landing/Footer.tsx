@@ -15,7 +15,7 @@ export function Footer() {
           
           {/* Column 1: Brand & Info */}
           <div className="md:col-span-2">
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center gap-0 mb-6">
               <div className="relative bottom-1.5" >
                 <ThemedLogoGif
                   alt="ETHShala"
