@@ -27,7 +27,7 @@ export function Navbar({ className, showNavLinks = true, showThemeToggle = true 
         <div className="flex items-center h-16 gap-8">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
+          <Link href="/" className="flex items-center gap-0 flex-shrink-0">
             <div className="relative bottom-1.5" >
               <ThemedLogoGif
                 alt="ETHShala"

@@ -178,7 +178,7 @@ export function Sidebar({ mobileOpen, onMobileClose, collapsed, toggleSidebar, }
         <div className={`px-4 py-6 border-b border-border transition-all duration-300 ${collapsed ? 'flex flex-col items-center gap-4' : 'flex items-center justify-between'}`}>
           
           {/* Brand Area */}
-          <Link href="/" className={`flex items-center transition-all duration-300 ${collapsed ? 'justify-center' : 'gap-2.5'}`}>
+          <Link href="/" className={`flex items-center transition-all duration-300 ${collapsed ? 'justify-center' : 'gap-0'}`}>
             <div className="relative shrink-0" >
               <ThemedLogoGif
                 alt="ETHShala"

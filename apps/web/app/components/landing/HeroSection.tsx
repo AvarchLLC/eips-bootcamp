@@ -85,8 +85,8 @@ export function HeroSection() {
             </h1>
 
             <p className="mt-8 max-w-md text-[17px] lg:text-[19px] font-medium leading-[1.4] text-[#333]">
-              Bringing Ethereum learning, events,
-              <br className="hidden sm:block" /> and communities to students.
+              Bringing Ethereum learning,
+              <br className="hidden sm:block" /> events &amp; communities to students.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-4">

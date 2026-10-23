@@ -143,13 +143,13 @@ export const footerLinks = {
     // { label: 'Marketplace', href: '/dashboard/marketplace' },
     // { label: 'My Learning', href: '/dashboard/learning' },
     // { label: 'Referrals', href: '/dashboard/referrals' },
-    { label: 'Impact', href: '/impact' },
-    { label: 'About Us', href: '/about' },
+    { label: 'Community', href: '/community' },
+    { label: 'About', href: '/about' },
     { label: 'Assets', href: '/assets' },
   ],
   followUs: [
     { label: 'X', href: 'https://x.com/Its_EthShala' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/company/ethshala/' },
-    { label: 'Discord', href: '/' },
+    // { label: 'Discord', href: '/' },
   ],
 };

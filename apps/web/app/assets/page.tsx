@@ -14,20 +14,20 @@ import { Badge } from "../components/ui/Badge";
 const ASSETS = [
   {
     name: "ETHShala Logo (Default)",
-    path: "/brand/ethshala_logo.svg",
+    path: "/brand/ethshala_logo.png",
     description: "The primary brand mark for ETHShala. Optimized for all backgrounds.",
     type: "SVG",
   },
   {
     name: "ETHShala Logo (White)",
-    path: "/brand/ethshala_logo_white.svg",
+    path: "/brand/ethshala_logo_white.png",
     description: "White version of the logo for dark backgrounds.",
     type: "SVG",
     background: "bg-[#121413]",
   },
   {
     name: "ETHShala Logo (Black)",
-    path: "/brand/ethshala_logo_black.svg",
+    path: "/brand/ethshala_logo_black.png",
     description: "Black version of the logo for light backgrounds.",
     type: "SVG",
     background: "bg-white",
@@ -76,7 +76,7 @@ export default function AssetsPage() {
                 <Badge variant="neutral" className="text-slate-900 !border !border-border bg-slate-50 dark:bg-white/5 dark:text-white">Light Theme Usage</Badge>
               </div>
               <div className="h-40 flex items-center justify-center bg-slate-50">
-                <div className="flex items-center gap-3 scale-125 pointer-events-none">
+                <div className="flex items-center gap-0 scale-125 pointer-events-none">
                   <div className="relative bottom-1.5 shrink-0">
                     <ThemedLogoGif
                       alt="ETHShala"
@@ -90,10 +90,20 @@ export default function AssetsPage() {
                   <Logo shalaColor="#0a0c0b" />
                 </div>
               </div>
-              <div className="p-6">
+              <div className="p-6 space-y-4 flex-1 flex flex-col">
                 <p className="text-xs text-slate-500 leading-relaxed">
                   The black visual mark is paired with the standard ETHShala wordmark for high contrast on light surfaces.
                 </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full mt-auto"
+                  href="/brand/ethshala_integrated_black.png"
+                  download
+                >
+                  <Download size={14} />
+                  Download
+                </Button>
               </div>
             </Card>
 
@@ -102,7 +112,7 @@ export default function AssetsPage() {
                 <Badge variant="neutral" className="bg-slate-50 text-slate-900 !border !border-border dark:text-white dark:bg-white/5">Dark Theme Usage</Badge>
               </div>
               <div className="h-40 flex items-center justify-center bg-[#121413]">
-                <div className="flex items-center gap-3 scale-125 pointer-events-none">
+                <div className="flex items-center gap-0 scale-125 pointer-events-none">
                   <div className="relative bottom-1.5 shrink-0">
                     <ThemedLogoGif
                       alt="ETHShala"
@@ -116,10 +126,20 @@ export default function AssetsPage() {
                   <Logo shalaColor="#ffffff" />
                 </div>
               </div>
-              <div className="p-6">
+              <div className="p-6 space-y-4 flex-1 flex flex-col">
                 <p className="text-xs text-muted-foreground leading-relaxed text-center">
                   The white visual mark is paired with the standard wordmark for dark mode consistency.
                 </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full mt-auto"
+                  href="/brand/ethshala_integrated_white.png"
+                  download
+                >
+                  <Download size={14} />
+                  Download
+                </Button>
               </div>
             </Card>
           </div>
@@ -145,17 +165,18 @@ export default function AssetsPage() {
                       size="sm"
                       className="flex-1"
                       href={asset.path}
+                      download
                     >
                       <Download size={14} className="mr-2" />
                       Download
                     </Button>
-                    <Button
+                    {/* <Button
                       variant="secondary"
                       size="icon"
                       onClick={() => copyToClipboard(asset.path, asset.name)}
                     >
                       {copied === asset.name ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
-                    </Button>
+                    </Button> */}
                   </div>
                 </div>
               </Card>
