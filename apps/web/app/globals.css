@@ -21,6 +21,21 @@
   --primary-foreground: #ffffff;
 }
 
+.community-page {
+  color-scheme: light;
+  --background: #f7f8f2;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --border: #e2e8f0;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
+  --primary: #10b981;
+  --primary-foreground: #ffffff;
+}
+
 .dark {
   --background: #080808;
   --foreground: #ffffff;
@@ -117,6 +132,23 @@ code, pre, .eip-number {
   to { transform: translateX(-50%); }
 }
 
+.campus-logo-float {
+  animation: campus-logo-float 4s ease-in-out infinite;
+}
+
+.campus-logo-float:nth-child(2) {
+  animation-delay: 0.6s;
+}
+
+.campus-logo-float:nth-child(3) {
+  animation-delay: 1.2s;
+}
+
+@keyframes campus-logo-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
 .social-posts-track {
   display: flex;
   width: max-content;
@@ -128,6 +160,10 @@ code, pre, .eip-number {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .campus-logo-float {
+    animation: none;
+  }
+
   .social-posts-track {
     animation: none;
   }
