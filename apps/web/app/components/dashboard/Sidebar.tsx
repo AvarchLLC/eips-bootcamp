@@ -16,6 +16,7 @@ import {
   Award,
   Video,
   BadgeCheck,
+  Flame,
   Users,
   BarChart2,
   ClipboardList,
@@ -44,6 +45,7 @@ const mainNav: NavItem[] = [
   { label: 'Course Catalog', href: '/dashboard/marketplace', icon: <BookOpen size={18} /> },
   { label: 'Assignments', href: '/dashboard/assignments', icon: <FileText size={18} /> },
   { label: 'Workshops', href: '/dashboard/events', icon: <Video size={18} /> },
+  { label: 'Quiz League', href: '/quiz-league', icon: <Flame size={18} /> },
   { label: 'Certificates', href: '/dashboard/certificates', icon: <Award size={18} /> },
   { label: 'Leaderboard', href: '/dashboard/leaderboard', icon: <Trophy size={18} /> },
 ];
