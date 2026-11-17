@@ -11,14 +11,14 @@ const getBaseURL = () => {
   if (process.env.NEXT_PUBLIC_APP_URL && !process.env.NEXT_PUBLIC_APP_URL.includes("localhost")) {
     return process.env.NEXT_PUBLIC_APP_URL;
   }
-  if (process.env.NODE_ENV === "production") {
-    return "https://www.ethshala.com";
-  }
   if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
     return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
   }
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`;
+  }
+  if (process.env.NODE_ENV === "production") {
+    return "https://ethshala.com";
   }
   return process.env.BETTER_AUTH_URL || "http://localhost:3000";
 };
@@ -31,6 +31,7 @@ export const auth = betterAuth({
     'http://localhost:3001',
     'http://127.0.0.1:3000',
     'http://192.168.1.3:3000',
+    'http://192.168.1.5:3000',
     'http://192.168.0.104:3000',
     'https://www.ethshala.com',
     'https://ethshala.com',
@@ -58,6 +59,7 @@ export const auth = betterAuth({
     accountLinking: {
       enabled: true,
       trustedProviders: ["google", "github"],
+      requireLocalEmailVerified: false,
     },
     storeStateStrategy: "cookie",
   },
@@ -79,9 +81,13 @@ export const auth = betterAuth({
     }),
   ],
   advanced: {
+    crossSubDomainCookies: {
+      enabled: process.env.NODE_ENV === "production" && !process.env.BETTER_AUTH_URL?.includes("localhost"),
+      domain: ".ethshala.com",
+    },
     defaultCookieAttributes: {
       sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production" && !process.env.BETTER_AUTH_URL?.includes("localhost"),
     },
   },
   onAPIError: {

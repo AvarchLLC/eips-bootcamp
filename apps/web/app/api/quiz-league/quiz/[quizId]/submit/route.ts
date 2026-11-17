@@ -194,3 +194,4 @@ export async function POST(
     return NextResponse.json({ error: error.message || 'Failed to submit quiz' }, { status: 500 });
   }
 }
+

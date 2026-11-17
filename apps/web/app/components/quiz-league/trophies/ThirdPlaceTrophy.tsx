@@ -118,3 +118,4 @@ export const ThirdPlaceTrophy: React.FC<TrophyProps> = ({ className = '', size =
     </div>
   );
 };
+

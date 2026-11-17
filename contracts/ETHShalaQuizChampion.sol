@@ -120,3 +120,4 @@ contract ETHShalaQuizChampion {
             || interfaceId == 0x01ffc9a7; // ERC-165
     }
 }
+

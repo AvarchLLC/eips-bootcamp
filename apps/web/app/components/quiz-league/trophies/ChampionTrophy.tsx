@@ -153,3 +153,4 @@ export const ChampionTrophy: React.FC<TrophyProps> = ({ className = '', size = 1
     </div>
   );
 };
+

@@ -281,3 +281,4 @@ export const EthshalaScholarBadge: React.FC<BadgeProps> = ({ className = '', siz
     </div>
   );
 };
+

@@ -90,3 +90,4 @@ export const RankBadge: React.FC<{ rank: number; className?: string }> = ({ rank
     </div>
   );
 };
+

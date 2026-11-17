@@ -147,3 +147,4 @@ function formatParticipant(scoreRecord: any, computedRank: number, currentUserId
     isCurrentUser: u.id === currentUserId,
   };
 }
+
