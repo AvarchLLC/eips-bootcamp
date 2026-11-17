@@ -5,7 +5,7 @@ import { prisma } from "./prisma";
 import { sendEmail } from "./email";
 
 const getBaseURL = () => {
-  let url = process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL;
+  const url = process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL;
 
   // In production, always enforce the canonical domain https://www.ethshala.com
   // to avoid Vercel edge 308 redirects that drop OAuth authorization codes and state cookies.
