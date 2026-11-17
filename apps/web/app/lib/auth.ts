@@ -9,7 +9,7 @@ const getBaseURL = () => {
 
   // In production, always enforce the canonical domain https://www.ethshala.com
   // to avoid Vercel edge 308 redirects that drop OAuth authorization codes and state cookies.
-  if (process.env.NODE_ENV === "production") {
+  if ((process.env.NODE_ENV as string) === "production") {
     if (url && !url.includes("ethshala.com") && !url.includes("localhost")) {
       return url.replace(/\/$/, "");
     }
@@ -17,7 +17,7 @@ const getBaseURL = () => {
   }
 
   // Preview or development environments
-  if (url) {
+  if (url && typeof url === "string") {
     return url.replace(/\/$/, "");
   }
   if (process.env.VERCEL_URL) {
@@ -85,12 +85,12 @@ export const auth = betterAuth({
   ],
   advanced: {
     crossSubDomainCookies: {
-      enabled: process.env.NODE_ENV === "production" && !process.env.BETTER_AUTH_URL?.includes("localhost"),
+      enabled: (process.env.NODE_ENV as string) === "production" && !process.env.BETTER_AUTH_URL?.includes("localhost"),
       domain: ".ethshala.com",
     },
     defaultCookieAttributes: {
       sameSite: "lax",
-      secure: process.env.NODE_ENV === "production" && !process.env.BETTER_AUTH_URL?.includes("localhost"),
+      secure: (process.env.NODE_ENV as string) === "production" && !process.env.BETTER_AUTH_URL?.includes("localhost"),
     },
   },
   onAPIError: {
