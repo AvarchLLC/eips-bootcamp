@@ -44,9 +44,9 @@ export function LeaderboardPreview({ leaderboard }: LeaderboardPreviewProps) {
     <div className="bg-card text-card-foreground border border-border rounded-2xl p-5 sm:p-6 flex flex-col h-full shadow-xs hover:border-primary/30 transition-all">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-foreground font-bold text-base">
-          Leaderboard <span className="text-muted-foreground font-normal text-sm">(Top 5)</span>
+          Quiz League <span className="text-muted-foreground font-normal text-sm">(Top 5)</span>
         </h3>
-        <Link href="/dashboard/leaderboard">
+        <Link href="/quiz-league/leaderboard">
           <button className="text-primary dark:text-emerald-400 text-xs font-bold hover:underline transition-colors cursor-pointer">
             View All
           </button>

@@ -4,8 +4,10 @@ import { getSessionUser, getActiveWeek } from '@/app/lib/quiz-league/service';
 
 export async function GET() {
   try {
-    const user = await getSessionUser();
-    const week = await getActiveWeek();
+    const [user, week] = await Promise.all([
+      getSessionUser(),
+      getActiveWeek(),
+    ]);
 
     if (!week) {
       return NextResponse.json({ error: 'No active quiz week found' }, { status: 404 });
@@ -16,45 +18,87 @@ export async function GET() {
     let currentDayIndex = today.getDay(); // 0 is Sunday, 1 is Monday ...
     if (currentDayIndex === 0) currentDayIndex = 7;
 
-    // Competition Stats
-    const totalParticipants = await prisma.quizWeeklyScore.count({
-      where: { weekId: week.id },
-    });
-
-    const activeParticipants = await prisma.quizWeeklyScore.count({
-      where: { weekId: week.id, quizzesCompleted: { gt: 0 } },
-    });
-
-    const quizzesCompletedTotal = await prisma.quizAttempt.count({
-      where: { quiz: { weekId: week.id } },
-    });
-
-    // User's Weekly Score
-    let userScore = null;
-    let userAttempts: any[] = [];
-    if (user) {
-      userScore = await prisma.quizWeeklyScore.findUnique({
-        where: {
-          weekId_userId: {
-            weekId: week.id,
-            userId: user.id,
+    // Ensure all synthetic mock scores are purged from dashboard calculations
+    await prisma.quizWeeklyScore.deleteMany({
+      where: {
+        user: {
+          email: {
+            endsWith: '@ethshala.com',
           },
         },
-      });
+      },
+    }).catch(() => {});
 
-      userAttempts = await prisma.quizAttempt.findMany({
+    // Concurrently fetch Competition Stats and User Score & Attempts
+    const [
+      totalParticipants,
+      activeParticipants,
+      quizzesCompletedTotal,
+      userScore,
+      userAttempts,
+    ] = await Promise.all([
+      prisma.quizWeeklyScore.count({
         where: {
-          userId: user.id,
+          weekId: week.id,
+          user: {
+            email: {
+              not: {
+                endsWith: '@ethshala.com',
+              },
+            },
+          },
+        },
+      }),
+      prisma.quizWeeklyScore.count({
+        where: {
+          weekId: week.id,
+          quizzesCompleted: { gt: 0 },
+          user: {
+            email: {
+              not: {
+                endsWith: '@ethshala.com',
+              },
+            },
+          },
+        },
+      }),
+      prisma.quizAttempt.count({
+        where: {
           quiz: { weekId: week.id },
+          user: {
+            email: {
+              not: {
+                endsWith: '@ethshala.com',
+              },
+            },
+          },
         },
-        select: {
-          quizId: true,
-          score: true,
-          pointsEarned: true,
-          completedAt: true,
-        },
-      });
-    }
+      }),
+      user
+        ? prisma.quizWeeklyScore.findUnique({
+            where: {
+              weekId_userId: {
+                weekId: week.id,
+                userId: user.id,
+              },
+            },
+          })
+        : Promise.resolve(null),
+      user
+        ? prisma.quizAttempt.findMany({
+            where: {
+              userId: user.id,
+              quiz: { weekId: week.id },
+            },
+            select: {
+              quizId: true,
+              score: true,
+              pointsEarned: true,
+              completedAt: true,
+            },
+          })
+        : Promise.resolve([]),
+    ]);
 
     const attemptedQuizIdMap = new Map<string, any>();
     userAttempts.forEach((att) => attemptedQuizIdMap.set(att.quizId, att));
@@ -115,9 +159,9 @@ export async function GET() {
         hasSubmittedToday: todayQuizItem?.status === 'COMPLETED',
       },
       competitionStats: {
-        totalParticipants: Math.max(totalParticipants, 5),
-        activeParticipants: Math.max(activeParticipants, 4),
-        quizzesCompletedTotal: Math.max(quizzesCompletedTotal, 12),
+        totalParticipants: totalParticipants,
+        activeParticipants: activeParticipants,
+        quizzesCompletedTotal: quizzesCompletedTotal,
       },
       todayQuiz: {
         id: todayFullQuiz?.id,
@@ -126,9 +170,12 @@ export async function GET() {
         dayIndex: todayFullQuiz?.dayIndex,
         durationMinutes: todayFullQuiz?.durationMinutes,
         maxPoints: todayFullQuiz?.maxPoints,
+        questionsCount: todayFullQuiz?.questions?.length || 5,
         questionCount: todayFullQuiz?.questions?.length || 5,
         status: todayQuizItem?.status,
+        hasAttempted: todayQuizItem?.status === 'COMPLETED',
         pointsEarned: todayQuizItem?.pointsEarned || 0,
+        attemptScore: todayQuizItem?.status === 'COMPLETED' ? Math.round(((todayQuizItem?.pointsEarned || 0) / (todayFullQuiz?.maxPoints || 100)) * 100) : 0,
       },
       calendar: weekSchedule,
     });

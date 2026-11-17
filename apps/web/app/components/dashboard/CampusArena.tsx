@@ -308,16 +308,16 @@ export function CampusArena({
             <div>
               <h3 className="text-xl font-black text-foreground tracking-tight flex items-center gap-2">
                 <Trophy size={18} className="text-amber-500" />
-                <span>Top Builders</span>
+                <span>Quiz League Top Builders</span>
               </h3>
-              <p className="text-muted-foreground text-xs mt-0.5">Campus chapter leaderboard</p>
+              <p className="text-muted-foreground text-xs mt-0.5">Weekly protocol competition standings</p>
             </div>
 
             <Link
-              href="/dashboard/leaderboard"
+              href="/quiz-league/leaderboard"
               className="text-primary dark:text-emerald-400 text-xs font-bold hover:underline transition-colors"
             >
-              All Time →
+              Championship Leaderboard →
             </Link>
           </div>
 

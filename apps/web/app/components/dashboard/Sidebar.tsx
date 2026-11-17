@@ -47,7 +47,7 @@ const mainNav: NavItem[] = [
   { label: 'Workshops', href: '/dashboard/events', icon: <Video size={18} /> },
   { label: 'Quiz League', href: '/quiz-league', icon: <Flame size={18} /> },
   { label: 'Certificates', href: '/dashboard/certificates', icon: <Award size={18} /> },
-  { label: 'Leaderboard', href: '/dashboard/leaderboard', icon: <Trophy size={18} /> },
+  { label: 'Leaderboard', href: '/quiz-league/leaderboard', icon: <Trophy size={18} /> },
 ];
 
 const capNav: NavItem[] = [
@@ -61,6 +61,7 @@ const adminNav: NavItem[] = [
   { label: 'Manage ETHShala', href: '/dashboard/admin/bootcamp', icon: <Layers size={18} /> },
   { label: 'Manage Assignments', href: '/dashboard/admin/assignments', icon: <FileText size={18} /> },
   { label: 'Manage Events', href: '/dashboard/admin/events', icon: <Zap size={18} /> },
+  { label: 'Quiz League Admin', href: '/dashboard/admin/quizzes', icon: <Flame size={18} /> },
 ];
 
 function NavSection({

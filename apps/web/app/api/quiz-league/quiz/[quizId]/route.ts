@@ -8,22 +8,24 @@ export async function GET(
 ) {
   try {
     const { quizId } = await params;
-    const user = await getSessionUser();
 
-    const quiz = await prisma.quiz.findUnique({
-      where: { id: quizId },
-      include: {
-        week: true,
-        questions: {
-          orderBy: { orderIndex: 'asc' },
-          include: {
-            options: {
-              orderBy: { orderIndex: 'asc' },
+    const [user, quiz] = await Promise.all([
+      getSessionUser(),
+      prisma.quiz.findUnique({
+        where: { id: quizId },
+        include: {
+          week: true,
+          questions: {
+            orderBy: { orderIndex: 'asc' },
+            include: {
+              options: {
+                orderBy: { orderIndex: 'asc' },
+              },
             },
           },
         },
-      },
-    });
+      }),
+    ]);
 
     if (!quiz) {
       return NextResponse.json({ error: 'Quiz not found' }, { status: 404 });
@@ -45,11 +47,28 @@ export async function GET(
     // If user already completed, return full results with explanations
     if (userAttempt) {
       const sanitizedQuestions = quiz.questions.map((q) => {
+        let type: 'SINGLE_CHOICE' | 'MULTIPLE_CHOICE' | 'CODE_ORDERING' | 'VULNERABILITY_DEBUG' = 'SINGLE_CHOICE';
+        let cleanQuestion = q.question;
+
+        if (q.question.startsWith('[MULTI]')) {
+          type = 'MULTIPLE_CHOICE';
+          cleanQuestion = q.question.replace(/^\[MULTI\]\s*/, '');
+        } else if (q.question.startsWith('[ORDER]')) {
+          type = 'CODE_ORDERING';
+          cleanQuestion = q.question.replace(/^\[ORDER\]\s*/, '');
+        } else if (q.question.startsWith('[DEBUG]')) {
+          type = 'VULNERABILITY_DEBUG';
+          cleanQuestion = q.question.replace(/^\[DEBUG\]\s*/, '');
+        } else if (q.options.filter(o => o.isCorrect).length > 1) {
+          type = 'MULTIPLE_CHOICE';
+        }
+
         const correctOpt = q.options.find((o) => o.isCorrect);
         return {
           id: q.id,
           orderIndex: q.orderIndex,
-          question: q.question,
+          question: cleanQuestion,
+          type,
           codeSnippet: q.codeSnippet,
           explanation: q.explanation,
           points: q.points,
@@ -90,18 +109,37 @@ export async function GET(
 
     // User has NOT submitted yet: SECURITY FIRST!
     // Strip `isCorrect` from options and strip `explanation` from questions!
-    const secureQuestions = quiz.questions.map((q) => ({
-      id: q.id,
-      orderIndex: q.orderIndex,
-      question: q.question,
-      codeSnippet: q.codeSnippet,
-      points: q.points,
-      options: q.options.map((o) => ({
-        id: o.id,
-        orderIndex: o.orderIndex,
-        text: o.text,
-      })),
-    }));
+    const secureQuestions = quiz.questions.map((q) => {
+      let type: 'SINGLE_CHOICE' | 'MULTIPLE_CHOICE' | 'CODE_ORDERING' | 'VULNERABILITY_DEBUG' = 'SINGLE_CHOICE';
+      let cleanQuestion = q.question;
+
+      if (q.question.startsWith('[MULTI]')) {
+        type = 'MULTIPLE_CHOICE';
+        cleanQuestion = q.question.replace(/^\[MULTI\]\s*/, '');
+      } else if (q.question.startsWith('[ORDER]')) {
+        type = 'CODE_ORDERING';
+        cleanQuestion = q.question.replace(/^\[ORDER\]\s*/, '');
+      } else if (q.question.startsWith('[DEBUG]')) {
+        type = 'VULNERABILITY_DEBUG';
+        cleanQuestion = q.question.replace(/^\[DEBUG\]\s*/, '');
+      } else if (q.options.filter(o => o.isCorrect).length > 1) {
+        type = 'MULTIPLE_CHOICE';
+      }
+
+      return {
+        id: q.id,
+        orderIndex: q.orderIndex,
+        question: cleanQuestion,
+        type,
+        codeSnippet: q.codeSnippet,
+        points: q.points,
+        options: q.options.map((o) => ({
+          id: o.id,
+          orderIndex: o.orderIndex,
+          text: o.text,
+        })),
+      };
+    });
 
     return NextResponse.json({
       quiz: {

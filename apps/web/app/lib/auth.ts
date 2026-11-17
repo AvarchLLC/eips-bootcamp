@@ -62,6 +62,7 @@ export const auth = betterAuth({
       trustedProviders: ["google", "github"],
       requireLocalEmailVerified: false,
     },
+    storeStateStrategy: "cookie",
     skipStateCookieCheck: true,
   },
   socialProviders: {
@@ -85,7 +86,7 @@ export const auth = betterAuth({
     crossSubDomainCookies: {
       // In production share cookies across ethshala.com and www.ethshala.com
       enabled: (process.env.NODE_ENV as string) === "production",
-      domain: ".ethshala.com",
+      domain: "ethshala.com",
     },
     defaultCookieAttributes: {
       sameSite: "lax",
@@ -95,7 +96,7 @@ export const auth = betterAuth({
   onAPIError: {
     errorURL: "/sign-in",
     onError: (error) => {
-      console.error("[Better Auth API Error]:", error);
+      console.error("[Better Auth API Error]:", (error as any)?.message || error);
     }
   },
   logger: {

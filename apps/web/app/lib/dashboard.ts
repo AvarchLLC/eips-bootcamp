@@ -101,43 +101,56 @@ async function getGlobalLeaderboard(): Promise<LeaderboardEntry[]> {
   }
 
   try {
-    const allUsers = await prisma.user.findMany({
-      include: {
-        profile: true,
-        capApplication: true,
-        streak: true,
-        referralCode: {
-          include: { referrals: true },
+    const activeWeek = await prisma.quizWeek.findFirst({
+      where: { status: 'ACTIVE' },
+      orderBy: { weekNumber: 'desc' },
+    });
+
+    const quizScores = await prisma.quizWeeklyScore.findMany({
+      where: {
+        ...(activeWeek ? { weekId: activeWeek.id } : {}),
+        user: {
+          email: {
+            not: {
+              endsWith: '@ethshala.com',
+            },
+          },
         },
-        xpTransactions: true,
+      },
+      orderBy: [{ totalPoints: 'desc' }, { quizzesCompleted: 'desc' }],
+      take: 20,
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            username: true,
+            email: true,
+            image: true,
+          },
+        },
       },
     });
 
-    const mappedLeaderboard: LeaderboardEntry[] = allUsers.map((u) => {
-      const uXp = (u.xpTransactions || []).reduce((acc, curr) => acc + curr.amount, 0);
+    const mappedLeaderboard: LeaderboardEntry[] = quizScores.map((score, idx) => {
+      const u = score.user;
       const isPlaceholder = u.email && u.email.includes('@placeholder');
       const uCleanName =
-        (u.name && u.name.toLowerCase() !== 'learner' && u.name.toLowerCase() !== 'explorer' && u.name) ||
-        u.profile?.fullName ||
-        (u.username && u.username.toLowerCase() !== 'learner' && u.username) ||
-        (!isPlaceholder && u.email ? u.email.split('@')[0] : 'Student');
+        u.name ||
+        u.username ||
+        (!isPlaceholder && u.email ? u.email.split('@')[0] : 'Builder');
 
       return {
-        rank: 0,
+        rank: idx + 1,
         userId: u.id,
         name: uCleanName,
-        handle: `@${(u.username || uCleanName).toLowerCase().replace(/\s+/g, '')}`,
-        avatarUrl: u.image || u.profile?.avatarUrl,
-        xp: uXp,
-        referrals: u.referralCode?.referrals?.length || 0,
-        capStatus: u.capApplication?.status || 'NOT APPLIED',
-        streak: u.streak?.currentStreak || 0,
+        handle: u.username ? `@${u.username}` : `@${uCleanName.toLowerCase().replace(/\s+/g, '')}`,
+        avatarUrl: u.image || null,
+        xp: score.totalPoints,
+        referrals: 0,
+        capStatus: 'MEMBER',
+        streak: score.currentStreak,
       };
-    });
-
-    mappedLeaderboard.sort((a, b) => b.xp - a.xp);
-    mappedLeaderboard.forEach((item, idx) => {
-      item.rank = idx + 1;
     });
 
     cachedGlobalLeaderboard = {
@@ -147,7 +160,7 @@ async function getGlobalLeaderboard(): Promise<LeaderboardEntry[]> {
 
     return mappedLeaderboard;
   } catch (err) {
-    console.error('Error fetching global leaderboard:', err);
+    console.error('Error fetching Quiz League leaderboard for dashboard:', err);
     return [];
   }
 }
@@ -286,18 +299,23 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
 
     const referralsCount = referrals.length;
 
-    // Calculate XP
-    const xp = (dbUser.xpTransactions || []).reduce((acc, curr) => acc + curr.amount, 0);
+    // Calculate XP: Strictly from Quiz League
+    const quizWeeklyScores = await prisma.quizWeeklyScore.findMany({
+      where: { userId: dbUser.id },
+      select: { totalPoints: true },
+    });
+    const quizPointsTotal = quizWeeklyScores.reduce((sum, s) => sum + s.totalPoints, 0);
 
-    // Calculate Referral-specific XP
-    const referralXp =
-      (dbUser.xpTransactions || [])
-        .filter(
-          (tx) =>
-            tx.category === 'REFERRAL' ||
-            (tx.reason && tx.reason.toLowerCase().includes('referral')),
-        )
-        .reduce((sum, tx) => sum + tx.amount, 0) || referralsCount * 500;
+    const quizXpTransactions = (dbUser.xpTransactions || [])
+      .filter(
+        (tx) =>
+          tx.category === 'COMPETITION' ||
+          (tx.reason && tx.reason.toLowerCase().includes('quiz')),
+      )
+      .reduce((sum, tx) => sum + tx.amount, 0);
+
+    const xp = Math.max(quizPointsTotal, quizXpTransactions);
+    const referralXp = 0;
 
     const capStatus = dbUser.capApplication?.status || 'NOT APPLIED';
 

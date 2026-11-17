@@ -1,6 +1,6 @@
 'use client';
 
-import { Bell, Search, Menu, FileText, BookOpen } from 'lucide-react';
+import { Bell, Search, Menu, FileText, BookOpen, Flame } from 'lucide-react';
 import { useSession, signOut } from '@/app/lib/auth-client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -209,19 +209,41 @@ export function Topbar({ onMobileMenuOpen }: TopbarProps) {
                 {activeNotifications.length === 0 ? (
                   <div className="p-4 text-center text-sm text-muted-foreground">No new notifications</div>
                 ) : (
-                  activeNotifications.map((n) => (
-                    <div key={n.id} className="p-3 border-b border-border hover:bg-accent transition-colors flex gap-3 items-start">
-                      <div className={`mt-0.5 p-1.5 rounded-md ${n.type === 'ASSIGNMENT' ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400' : 'bg-primary/10 text-primary dark:text-emerald-400'}`}>
-                        {n.type === 'ASSIGNMENT' ? <FileText size={14} /> : <BookOpen size={14} />}
+                  activeNotifications.map((n) => {
+                    const isQuiz = n.type === 'QUIZ';
+                    const isAssn = n.type === 'ASSIGNMENT';
+
+                    const inner = (
+                      <div className="p-3 border-b border-border hover:bg-accent transition-colors flex gap-3 items-start">
+                        <div
+                          className={`mt-0.5 p-1.5 rounded-md ${
+                            isQuiz
+                              ? 'bg-amber-500/15 text-amber-500'
+                              : isAssn
+                              ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
+                              : 'bg-primary/10 text-primary dark:text-emerald-400'
+                          }`}
+                        >
+                          {isQuiz ? <Flame size={14} className="fill-amber-500" /> : isAssn ? <FileText size={14} /> : <BookOpen size={14} />}
+                        </div>
+                        <div className="flex flex-col flex-1">
+                          <p className="text-sm font-medium text-foreground leading-snug">{n.title}</p>
+                          <span className="text-[10px] text-muted-foreground mt-1">
+                            {new Date(n.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex flex-col">
-                        <p className="text-sm font-medium text-foreground leading-snug">{n.title}</p>
-                        <span className="text-[10px] text-muted-foreground mt-1">
-                          {new Date(n.createdAt).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
-                  ))
+                    );
+
+                    if (n.link) {
+                      return (
+                        <Link key={n.id} href={n.link} onClick={() => setShowNotifications(false)}>
+                          {inner}
+                        </Link>
+                      );
+                    }
+                    return <div key={n.id}>{inner}</div>;
+                  })
                 )}
               </div>
             </div>

@@ -48,7 +48,7 @@ export async function getLearningData(): Promise<LearningData | null> {
     });
     const allAssignments = await prisma.assignment.findMany({ orderBy: { createdAt: 'asc' } });
     
-    const [userSubmissions, lessonProgress, xpTxs] = await Promise.all([
+    const [userSubmissions, lessonProgress, quizScores, xpTxs] = await Promise.all([
       prisma.assignmentSubmission.findMany({
         where: { userId: dbUser.id },
         include: { assignment: true },
@@ -57,14 +57,26 @@ export async function getLearningData(): Promise<LearningData | null> {
       prisma.lessonProgress.findMany({
         where: { userId: dbUser.id }
       }),
-      prisma.xPTransaction.findMany({
+      prisma.quizWeeklyScore.findMany({
         where: { userId: dbUser.id },
+        select: { totalPoints: true }
+      }),
+      prisma.xPTransaction.findMany({
+        where: {
+          userId: dbUser.id,
+          OR: [
+            { category: 'COMPETITION' },
+            { reason: { contains: 'Quiz', mode: 'insensitive' } },
+          ],
+        },
         orderBy: { createdAt: 'desc' }
       })
     ]);
 
-    // Rank calculation (simple approximation: how many users have more XP)
-    const userTotalXp = xpTxs.reduce((sum, tx) => sum + tx.amount, 0);
+    // Rank & XP calculation: strictly based on Quiz League points
+    const quizScoreTotal = quizScores.reduce((sum, s) => sum + s.totalPoints, 0);
+    const txTotal = xpTxs.reduce((sum, tx) => sum + tx.amount, 0);
+    const userTotalXp = Math.max(quizScoreTotal, txTotal);
     const usersWithMoreXpCount = await prisma.xPTransaction.groupBy({
       by: ['userId'],
       _sum: { amount: true },

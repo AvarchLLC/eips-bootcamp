@@ -29,36 +29,62 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'No quiz week available' }, { status: 404 });
     }
 
-    // All available weeks for dropdown
-    const availableWeeks = await prisma.quizWeek.findMany({
-      select: {
-        id: true,
-        weekNumber: true,
-        title: true,
-        status: true,
-        startDate: true,
-        endDate: true,
-      },
-      orderBy: { weekNumber: 'desc' },
-    });
-
-    // Fetch Leaderboard for this week
-    const allScores = await prisma.quizWeeklyScore.findMany({
-      where: { weekId: week.id },
-      orderBy: [{ rank: 'asc' }, { totalPoints: 'desc' }],
-      include: {
+    // Ensure all synthetic mock data is completely purged from the leaderboard
+    await prisma.quizWeeklyScore.deleteMany({
+      where: {
         user: {
-          select: {
-            id: true,
-            name: true,
-            username: true,
-            email: true,
-            image: true,
-            walletAddress: true,
+          email: {
+            endsWith: '@ethshala.com',
           },
         },
       },
-    });
+    }).catch(() => {});
+
+    // Concurrently fetch available weeks dropdown and leaderboard scores for this week
+    const [availableWeeks, rawScores] = await Promise.all([
+      prisma.quizWeek.findMany({
+        select: {
+          id: true,
+          weekNumber: true,
+          title: true,
+          status: true,
+          startDate: true,
+          endDate: true,
+        },
+        orderBy: { weekNumber: 'desc' },
+      }),
+      prisma.quizWeeklyScore.findMany({
+        where: {
+          weekId: week.id,
+          user: {
+            email: {
+              not: {
+                endsWith: '@ethshala.com',
+              },
+            },
+          },
+        },
+        orderBy: [{ totalPoints: 'desc' }, { quizzesCompleted: 'desc' }],
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              username: true,
+              email: true,
+              image: true,
+              walletAddress: true,
+            },
+          },
+        },
+      }),
+    ]);
+
+    // Assign true ranks dynamically based on actual scores
+    const allScores = rawScores.map((s, idx) => ({
+      ...s,
+      rank: idx + 1,
+    }));
 
     // Filter by search if provided
     let filtered = allScores;
@@ -128,16 +154,16 @@ export async function GET(request: Request) {
 
 function formatParticipant(scoreRecord: any, computedRank: number, currentUserId?: string) {
   const u = scoreRecord.user;
-  const displayName = u.name || u.username || 'Anonymous Builder';
+  const displayName = u.name || u.username || (u.email ? u.email.split('@')[0] : 'Builder');
   const shortenedWallet = u.walletAddress
     ? `${u.walletAddress.slice(0, 6)}...${u.walletAddress.slice(-4)}`
     : null;
 
   return {
     userId: u.id,
-    rank: scoreRecord.rank || computedRank,
+    rank: computedRank,
     name: displayName,
-    username: u.username ? `@${u.username}` : '@builder',
+    username: u.username ? (u.username.startsWith('@') ? u.username : `@${u.username}`) : `@${displayName.toLowerCase().replace(/\s+/g, '')}`,
     avatarUrl: u.image || null,
     walletAddress: u.walletAddress || null,
     shortenedWallet,
