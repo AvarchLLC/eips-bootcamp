@@ -4,19 +4,18 @@ import { emailOTP } from "better-auth/plugins";
 import { prisma } from "./prisma";
 import { sendEmail } from "./email";
 
-const getBaseURL = () => {
-  const url = process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL;
+// Hard-code the canonical production URL here so Better-Auth's internal
+// BETTER_AUTH_URL env reader never picks up the apex domain or a preview URL
+// that would be 308-redirected by Vercel's edge before Google's callback lands.
+const PRODUCTION_URL = "https://www.ethshala.com";
 
-  // In production, always enforce the canonical domain https://www.ethshala.com
-  // to avoid Vercel edge 308 redirects that drop OAuth authorization codes and state cookies.
+const getBaseURL = (): string => {
+  // In production always use the www canonical domain
   if ((process.env.NODE_ENV as string) === "production") {
-    if (url && !url.includes("ethshala.com") && !url.includes("localhost")) {
-      return url.replace(/\/$/, "");
-    }
-    return "https://www.ethshala.com";
+    return PRODUCTION_URL;
   }
-
-  // Preview or development environments
+  // Local or preview environments
+  const url = process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL;
   if (url && typeof url === "string") {
     return url.replace(/\/$/, "");
   }
@@ -38,7 +37,6 @@ export const auth = betterAuth({
     'http://192.168.0.104:3000',
     'https://www.ethshala.com',
     'https://ethshala.com',
-    ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
     ...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
     ...(process.env.VERCEL_PROJECT_PRODUCTION_URL ? [`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`] : []),
   ],
@@ -74,7 +72,7 @@ export const auth = betterAuth({
   },
   plugins: [
     emailOTP({
-      async sendVerificationOTP({ email, otp, type }) {
+      async sendVerificationOTP({ email, otp }) {
         await sendEmail({
           to: email,
           subject: "Your verification code",
@@ -85,12 +83,13 @@ export const auth = betterAuth({
   ],
   advanced: {
     crossSubDomainCookies: {
-      enabled: (process.env.NODE_ENV as string) === "production" && !process.env.BETTER_AUTH_URL?.includes("localhost"),
+      // In production share cookies across ethshala.com and www.ethshala.com
+      enabled: (process.env.NODE_ENV as string) === "production",
       domain: ".ethshala.com",
     },
     defaultCookieAttributes: {
       sameSite: "lax",
-      secure: (process.env.NODE_ENV as string) === "production" && !process.env.BETTER_AUTH_URL?.includes("localhost"),
+      secure: (process.env.NODE_ENV as string) === "production",
     },
   },
   onAPIError: {
