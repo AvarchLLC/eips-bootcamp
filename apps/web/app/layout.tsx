@@ -61,6 +61,7 @@ export const metadata: Metadata = {
 
 import { Chatbot } from "./components/Chatbot";
 import { Toaster } from "sonner";
+import { Analytics } from "@vercel/analytics/next";
 
 export default function RootLayout({
   children,
@@ -89,6 +90,7 @@ export default function RootLayout({
             <Toaster position="bottom-right" richColors closeButton />
           </Web3Provider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
