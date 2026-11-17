@@ -5,22 +5,25 @@ import { prisma } from "./prisma";
 import { sendEmail } from "./email";
 
 const getBaseURL = () => {
-  if (process.env.BETTER_AUTH_URL && !process.env.BETTER_AUTH_URL.includes("localhost")) {
-    return process.env.BETTER_AUTH_URL;
+  let url = process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL;
+
+  // In production, always enforce the canonical domain https://www.ethshala.com
+  // to avoid Vercel edge 308 redirects that drop OAuth authorization codes and state cookies.
+  if (process.env.NODE_ENV === "production") {
+    if (url && !url.includes("ethshala.com") && !url.includes("localhost")) {
+      return url.replace(/\/$/, "");
+    }
+    return "https://www.ethshala.com";
   }
-  if (process.env.NEXT_PUBLIC_APP_URL && !process.env.NEXT_PUBLIC_APP_URL.includes("localhost")) {
-    return process.env.NEXT_PUBLIC_APP_URL;
-  }
-  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
-    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+
+  // Preview or development environments
+  if (url) {
+    return url.replace(/\/$/, "");
   }
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`;
   }
-  if (process.env.NODE_ENV === "production") {
-    return "https://ethshala.com";
-  }
-  return process.env.BETTER_AUTH_URL || "http://localhost:3000";
+  return "http://localhost:3000";
 };
 
 export const auth = betterAuth({
@@ -61,7 +64,7 @@ export const auth = betterAuth({
       trustedProviders: ["google", "github"],
       requireLocalEmailVerified: false,
     },
-    storeStateStrategy: "cookie",
+    skipStateCookieCheck: true,
   },
   socialProviders: {
     google: {
