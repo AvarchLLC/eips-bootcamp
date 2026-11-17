@@ -22,13 +22,32 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import { Web3Provider } from "./components/Web3Provider";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.BETTER_AUTH_URL || "https://www.ethshala.com"),
+  metadataBase: new URL("https://www.ethshala.com"),
+  alternates: {
+    canonical: "https://www.ethshala.com",
+  },
   title: {
     default: "ETHShala | Ethereum Learning, Partnerships, Events & Communities",
     template: "%s | ETHShala",
   },
   description: "ETHShala brings Ethereum learning to campuses through hands-on workshops, community events, structured learning modules, and student-led initiatives.",
-  keywords: [ "ETHShala","Ethereum Education","Ethereum Learning","Blockchain Education","Web3 Education","Ethereum Workshops","Campus Partnerships","Web3 Community","Smart Contracts","Ethereum Improvement Proposals","EIP Learning","Campus Ambassador Program",],
+  keywords: [
+    "ETHShala",
+    "Ethereum Education",
+    "Ethereum Learning",
+    "Blockchain Education",
+    "Web3 Education",
+    "Ethereum Workshops",
+    "Campus Partnerships",
+    "Web3 Community",
+    "Smart Contracts",
+    "Ethereum Improvement Proposals",
+    "EIP Learning",
+    "Campus Ambassador Program",
+    "Quiz League",
+    "Web3 Student Builders",
+    "EVM Labs"
+  ],
   authors: [{ name: "ETHShala Team" }],
   openGraph: {
     type: "website",
@@ -51,12 +70,43 @@ export const metadata: Metadata = {
     title: "ETHShala | Ethereum Learning, Partnerships, Events & Communities",
     description: "Discover Ethereum through campus workshops, hands-on learning, community events, and student-led initiatives.",
     images: ["https://www.ethshala.com/brand/og-image.png"],
-    creator: "@ETHShala",
+    creator: "@Its_EthShala",
   },
   icons: {
     icon: "/brand/ethshala_logo.svg",
     apple: "/brand/ethshala_logo.svg",
   },
+};
+
+const jsonLdOrganization = {
+  "@context": "https://schema.org",
+  "@type": "EducationalOrganization",
+  name: "ETHShala",
+  alternateName: ["ETH Shala", "EIPs Bootcamp"],
+  url: "https://www.ethshala.com",
+  logo: "https://www.ethshala.com/brand/ethshala_logo.svg",
+  sameAs: [
+    "https://x.com/Its_EthShala",
+    "https://www.linkedin.com/company/ethshala/",
+  ],
+  description: "Open Ethereum Education platform for student builders, protocol governance tracks, EVM labs, and campus cohorts.",
+  knowsAbout: [
+    "Ethereum",
+    "Ethereum Improvement Proposals (EIPs)",
+    "Smart Contract Development",
+    "EVM",
+    "Solidity",
+    "Web3 Education",
+    "Account Abstraction (ERC-4337)",
+    "Proto-Danksharding (EIP-4844)",
+  ],
+};
+
+const jsonLdWebSite = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "ETHShala",
+  url: "https://www.ethshala.com",
 };
 
 import { Chatbot } from "./components/Chatbot";
@@ -76,6 +126,14 @@ export default function RootLayout({
     >
       <head>
         <link href="https://api.fontshare.com/v2/css?f[]=clash-display@700&display=swap" rel="stylesheet" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrganization) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebSite) }}
+        />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-300 font-body">
         <ThemeProvider

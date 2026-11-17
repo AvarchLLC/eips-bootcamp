@@ -1,0 +1,45 @@
+# Allow all search engine crawlers
+User-agent: *
+Allow: /
+Disallow: /dashboard/
+Disallow: /api/
+
+# OpenAI / ChatGPT Search
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /dashboard/
+Disallow: /api/
+
+# OpenAI GPTBot (AI model training crawler)
+User-agent: GPTBot
+Allow: /
+Disallow: /dashboard/
+Disallow: /api/
+
+# Perplexity AI
+User-agent: PerplexityBot
+Allow: /
+Disallow: /dashboard/
+Disallow: /api/
+
+# Anthropic / Claude
+User-agent: ClaudeBot
+Allow: /
+Disallow: /dashboard/
+Disallow: /api/
+
+# Google Search
+User-agent: Googlebot
+Allow: /
+Disallow: /dashboard/
+Disallow: /api/
+
+# Microsoft Bing
+User-agent: Bingbot
+Allow: /
+Disallow: /dashboard/
+Disallow: /api/
+
+# Host & Sitemap
+Host: https://www.ethshala.com
+Sitemap: https://www.ethshala.com/sitemap.xml
