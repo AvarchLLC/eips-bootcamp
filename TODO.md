@@ -77,7 +77,7 @@ To avoid stepping on each other's code and maintain high momentum, the remaining
 **Dependencies Needed from Dhanush**: `coinBalance` on User, Certificate completion trigger.
 
 ### Phase 1 Tasks (Due: Nov 26 – Nov 27) `[P0 - Launch Critical]`
-- [ ] **Task RC-1: Topbar Level & Coin Pill (`/app/components/dashboard/Topbar.tsx`)**
+- [x] **Task RC-1: Topbar Level & Coin Pill (`/app/components/dashboard/Topbar.tsx`)**
   - Calculate Player Level from total XP: `Level = Math.floor(Math.sqrt(xp / 100)) + 1`.
   - Add a Level badge (e.g. `Lvl 3 Explorer`) next to the user's name.
   - Add an ETHShala Coin (`ESHC`) pill in the navbar next to XP with a gold coin icon (`bg-[#ffd359] text-[#111] font-bold px-3 py-1 rounded-full`).
@@ -107,7 +107,7 @@ To avoid stepping on each other's code and maintain high momentum, the remaining
 **Target Routes**: `prisma/schema.prisma`, `/api/payments/*`, `/dashboard/admin/payments`, Smart Contracts
 
 ### Phase 1 Tasks (Due: Nov 25 – Nov 27) `[P0 - Launch Critical]`
-- [ ] **Task DN-1: Database Schema Expansion (`prisma/schema.prisma`)**
+- [x] **Task DN-1: Database Schema Expansion (`prisma/schema.prisma`)**
   - Add `coinBalance Int @default(0)` to `User`.
   - Add `CoinTransaction` model (`id`, `userId`, `amount`, `type`, `reason`, `referenceId`, `createdAt`).
   - Add `UserInventory` model (`id`, `userId`, `itemId`, `itemType`, `isEquipped`, `acquiredAt`).
@@ -115,9 +115,9 @@ To avoid stepping on each other's code and maintain high momentum, the remaining
 - [ ] **Task DN-2: Base ERC-20 Smart Contract (`ETHShalaCoin.sol`)**
   - Write standard OpenZeppelin ERC-20 contract for `ETHShalaCoin` (`ESHC`).
   - Deploy to Base Sepolia testnet and verify on Basescan.
-- [ ] **Task DN-3: Coin Ledger Service & Reward Hooks (`/app/lib/coins.ts`)**
+- [x] **Task DN-3: Coin Ledger Service & Reward Hooks (`/app/lib/coins.ts`)**
   - Build helper methods: `creditCoins(userId, amount, reason, refId)` and `debitCoins(userId, amount, reason)`.
-  - Hook into Quiz submission API to award coins on completion.
+  - Export server actions for coin operations (`/app/actions/coins.ts`).
 
 ### Phase 2 Tasks (Due: Nov 28 – Nov 29) `[P0 / P1]`
 - [ ] **Task DN-4: Admin Payment Review Page (`/dashboard/admin/payments/page.tsx`)**
@@ -135,3 +135,18 @@ To avoid stepping on each other's code and maintain high momentum, the remaining
 - [ ] **Task YC-2: End-to-End User Testing**: Test the entire student loop: Sign-up -> Quiz -> Arcade -> Inventory -> Certificate (`YC`).
 - [ ] **Task PR-1: Tokenomics Balancing**: Validate coin earn rates (quizzes, arcade, quests) vs spend costs (cosmetics, boosts) to prevent hyperinflation (`PR`).
 - [ ] **Task PR-2: Ecosystem & Partner Outreach**: Share roadmap progress with Ethereum Foundation / Base ecosystem partners (`PR`).
+
+---
+
+## 🌐 MODULE 5: Cloudflare Hosting & Production Deployment
+**Lead**: `DN` | **Priority**: `[P1 - Post-Feature Freeze / Pre-Launch]`
+
+- [ ] **Task CF-1: Cloudflare DNS & Proxy Setup**
+  - Migrate domain nameservers to Cloudflare.
+  - Enable Full (Strict) SSL/TLS, HTTP/3, and automatic DDoS / bot mitigation.
+  - Configure page rules and edge caching headers for static assets, avatars, and fonts.
+- [ ] **Task CF-2: Deployment Pipeline (Cloudflare Edge / Container Proxy)**
+  - Configure `apps/web` deployment via `@opennextjs/cloudflare` on Cloudflare Workers/Pages, OR deploy containerized instance with Cloudflare proxy routing.
+  - Set up Cloudflare Hyperdrive / connection pooling for the PostgreSQL database.
+- [ ] **Task CF-3: Production Secrets & Environment Variables**
+  - Set `DATABASE_URL`, `BETTER_AUTH_SECRET`, crypto treasury keys, and RPC endpoints in Cloudflare dashboard / secrets.

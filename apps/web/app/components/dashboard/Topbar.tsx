@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ThemeToggle } from '../ThemeToggle';
 import { useState, useEffect, useRef } from 'react';
-import { getUserTotalXp, getRecentNotifications, type AppNotification } from '@/app/actions/topbar';
+import { getUserTotalXp, getUserCoinBalance, getRecentNotifications, type AppNotification } from '@/app/actions/topbar';
 import { useDisconnect } from 'wagmi';
 import { toast } from 'sonner';
 
@@ -21,6 +21,7 @@ export function Topbar({ onMobileMenuOpen }: TopbarProps) {
   const { disconnect } = useDisconnect();
 
   const [xp, setXp] = useState<number>(0);
+  const [coins, setCoins] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [modules, setModules] = useState<any[]>([]);
@@ -36,6 +37,7 @@ export function Topbar({ onMobileMenuOpen }: TopbarProps) {
     if (user) {
       // Initial fetch
       getUserTotalXp().then(setXp);
+      getUserCoinBalance().then(setCoins);
       getRecentNotifications().then(setNotifications);
       
       // Fetch modules for search
@@ -44,9 +46,10 @@ export function Topbar({ onMobileMenuOpen }: TopbarProps) {
         .then(setModules)
         .catch(console.error);
       
-      // Poll XP every 15 seconds for real-time updates
+      // Poll XP & Coins every 15 seconds for real-time updates
       const intervalId = setInterval(() => {
         getUserTotalXp().then(setXp);
+        getUserCoinBalance().then(setCoins);
       }, 15000);
       
       return () => clearInterval(intervalId);
@@ -104,6 +107,7 @@ export function Topbar({ onMobileMenuOpen }: TopbarProps) {
     ? user.name 
     : (user?.email ? user.email.split('@')[0] : 'Student');
   const userRole = (user as any)?.role ? String((user as any).role) : 'STUDENT';
+  const playerLevel = Math.floor(Math.sqrt((xp || 0) / 100)) + 1;
 
   return (
     <header className="sticky top-0 z-30 h-[64px] bg-background/90 backdrop-blur-xl border-b border-border flex items-center px-4 lg:px-6 gap-4">
@@ -249,6 +253,24 @@ export function Topbar({ onMobileMenuOpen }: TopbarProps) {
             </div>
           )}
         </div>
+
+        {/* Player Level Badge */}
+        <div className="hidden md:flex items-center gap-1.5 bg-muted/60 border border-border rounded-full px-2.5 py-1 shadow-xs" title={`Player Level ${playerLevel}`}>
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+          <span className="text-muted-foreground text-[10px] font-bold uppercase tracking-wider">LVL</span>
+          <span className="text-foreground font-black text-xs">{playerLevel}</span>
+        </div>
+
+        {/* ETHShala Coin (ESHC) Pill */}
+        <Link 
+          href="/dashboard/wallet" 
+          className="flex items-center gap-1.5 bg-[#ffd359]/20 hover:bg-[#ffd359]/35 border border-[#ffd359]/50 rounded-full px-3 py-1 shadow-xs transition-all cursor-pointer group/coin"
+          title="ETHShala Coin Balance (Click to view Wallet)"
+        >
+          <span className="w-2 h-2 rounded-full bg-[#f8bd36] shadow-[0_0_6px_#f8bd36] group-hover/coin:scale-110 transition-transform" />
+          <span className="text-amber-800 dark:text-amber-300 text-[10px] font-black uppercase tracking-wider">ESHC</span>
+          <span className="text-foreground font-black text-sm">{coins.toLocaleString()}</span>
+        </Link>
 
         {/* XP Badge */}
         <div className="flex items-center gap-1.5 bg-primary/10 border border-primary/20 rounded-full px-3 py-1 shadow-xs">
