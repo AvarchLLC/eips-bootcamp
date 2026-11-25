@@ -44,7 +44,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { moduleId } = body;
 
-    if (!moduleId) {
+    if (typeof moduleId !== 'string' || !moduleId) {
       return NextResponse.json({ error: 'Missing moduleId' }, { status: 400 });
     }
 
@@ -56,7 +56,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Module not found' }, { status: 404 });
     }
 
-    const amountValue = (moduleItem.price || 1).toFixed(2);
+    if (!moduleItem.isPremium || moduleItem.price <= 0) {
+      return NextResponse.json({ error: 'This module does not require payment' }, { status: 400 });
+    }
+
+    if (process.env.NODE_ENV === 'production' && process.env.PAYPAL_MODE !== 'live') {
+      return NextResponse.json({ error: 'PayPal live payments are not configured' }, { status: 503 });
+    }
+
+    const amountValue = moduleItem.price.toFixed(2);
     const accessToken = await getPayPalAccessToken();
 
     if (accessToken) {
@@ -71,6 +79,7 @@ export async function POST(request: Request) {
           purchase_units: [
             {
               reference_id: moduleItem.id,
+              custom_id: user.id,
               description: `ETHShala Course: ${moduleItem.title}`,
               amount: {
                 currency_code: 'USD',
@@ -83,14 +92,22 @@ export async function POST(request: Request) {
 
       if (orderRes.ok) {
         const orderData = await orderRes.json();
+        if (typeof orderData.id !== 'string' || !orderData.id) {
+          return NextResponse.json({ error: 'PayPal returned an invalid order ID' }, { status: 502 });
+        }
         return NextResponse.json({ id: orderData.id, status: orderData.status });
       } else {
         const errJson = await orderRes.json().catch(() => ({}));
         console.error('PayPal create order error:', errJson);
+        return NextResponse.json({ error: 'PayPal could not create the order' }, { status: 502 });
       }
     }
 
-    // Interactive Demo / Sandbox fallback if credentials are unset or in dev
+    if (process.env.NODE_ENV !== 'development') {
+      return NextResponse.json({ error: 'PayPal is not configured' }, { status: 503 });
+    }
+
+    // Interactive demo fallback for local development only.
     const demoOrderId = `PAYPAL_ORDER_${Date.now()}_${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
     return NextResponse.json({
       id: demoOrderId,

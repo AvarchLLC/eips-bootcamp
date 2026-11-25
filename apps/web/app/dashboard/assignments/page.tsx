@@ -45,7 +45,11 @@ export default function AssignmentsPage() {
     }
   };
 
-  if (setLoading) {
+  useEffect(() => {
+    if (user?.id) fetchAssignments();
+  }, [user?.id]);
+
+  if (loading) {
     return (
       <DashboardShell>
         <div className="flex items-center justify-center h-96">
@@ -56,10 +60,6 @@ export default function AssignmentsPage() {
       </DashboardShell>
     );
   }
-
-  useEffect(() => {
-    if (user?.id) fetchAssignments();
-  }, [user?.id]);
 
   const handleSubmit = async (assignmentId: string, file?: File) => {
     if (!user?.id) return;
