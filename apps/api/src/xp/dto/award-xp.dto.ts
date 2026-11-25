@@ -1,4 +1,11 @@
-import { IsString, IsNotEmpty, IsInt, Min } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsInt,
+  Min,
+  IsOptional,
+  IsNumber,
+} from 'class-validator';
 
 export class AwardXpDto {
   @IsString()
@@ -13,4 +20,17 @@ export class AwardXpDto {
   @IsString()
   @IsNotEmpty()
   reason: string;
+
+  @IsString()
+  @IsOptional()
+  category?: string;
+
+  @IsString()
+  @IsOptional()
+  referenceId?: string;
+
+  @IsNumber()
+  @Min(0.1)
+  @IsOptional()
+  multiplier?: number;
 }

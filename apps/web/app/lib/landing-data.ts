@@ -129,6 +129,7 @@ export const whyCards: WhyCard[] = [
 
 export const navLinks = [
   { label: 'Home', href: '/' },
+  { label: 'Quiz League', href: '/quiz-league' },
   { label: 'Learn', href: '/dashboard' },
   // { label: 'Programs', href: '/#programs' },
   // { label: 'Events', href: '/community/#events' },

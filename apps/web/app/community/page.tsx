@@ -12,9 +12,10 @@ import { CommunityPostsSection } from '../components/community/Social';
 export default function CommunityPage() {
   return (
     <div className="community-page min-h-screen overflow-hidden bg-background font-body text-foreground">
-      <Navbar 
-      className="dark bg-background/90 backdrop-blur-xl border-b border-border"
-      showThemeToggle={false} />
+      <Navbar
+        className="dark bg-background/90 backdrop-blur-xl border-b border-border"
+        showThemeToggle={false}
+      />
       <main>
         <CommunityEventsSection />
         <CommunityPostsSection />

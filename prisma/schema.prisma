@@ -8,27 +8,40 @@ datasource db {
 }
 
 model User {
-  id                    String                 @id @default(cuid())
-  email                 String                 @unique
-  username              String?                @unique
-  walletAddress         String?                @unique
-  role                  UserRole               @default(STUDENT)
-  createdAt             DateTime               @default(now())
-  updatedAt             DateTime               @updatedAt
-  emailVerified         Boolean                @default(false)
-  image                 String?
-  name                  String?
-  accounts              Account[]
-  assignmentSubmissions AssignmentSubmission[]
-  capApplication        CAPApplication?
-  lessonProgress        LessonProgress[]
-  moduleSubscriptions   ModuleSubscription[]
-  profile               Profile?
-  referredBy            Referral?
-  referralCode          ReferralCode?
-  rewardRedemptions     RewardRedemption[]
-  sessions              Session[]
-  xpTransactions        XPTransaction[]
+  id                        String                          @id @default(cuid())
+  email                     String                          @unique
+  username                  String?                         @unique
+  walletAddress             String?                         @unique
+  role                      UserRole                        @default(STUDENT)
+  createdAt                 DateTime                        @default(now())
+  updatedAt                 DateTime                        @updatedAt
+  emailVerified             Boolean                         @default(false)
+  image                     String?
+  name                      String?
+  currentLeagueTier         LeagueTier                      @default(BRONZE)
+  accounts                  Account[]
+  achievements              UserAchievement[]
+  assignmentSubmissions     AssignmentSubmission[]
+  capApplication            CAPApplication?
+  communityParticipations   CommunityChallengeParticipant[]
+  competitionCertificates   CompetitionCertificate[]
+  competitionParticipations CompetitionParticipant[]
+  dailyQuests               UserDailyQuest[]
+  leagueMemberships         LeagueMember[]
+  lessonProgress            LessonProgress[]
+  moduleSubscriptions       ModuleSubscription[]
+  nftRewards                NftReward[]
+  profile                   Profile?
+  referredBy                Referral?
+  referralCode              ReferralCode?
+  rewardRedemptions         RewardRedemption[]
+  seasonSnapshots           SeasonUserSnapshot[]
+  sessions                  Session[]
+  streak                    UserStreak?
+  xpTransactions            XPTransaction[]
+  quizAttempts              QuizAttempt[]
+  quizWeeklyScores          QuizWeeklyScore[]
+  quizNftRewards            QuizNFTReward[]
 }
 
 model Profile {
@@ -131,14 +144,19 @@ model Referral {
 }
 
 model XPTransaction {
-  id        String   @id @default(cuid())
-  userId    String
-  amount    Int
-  reason    String
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String   @id @default(cuid())
+  userId      String
+  amount      Int
+  reason      String
+  category    String   @default("GENERAL")
+  referenceId String?
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, referenceId])
   @@index([userId])
+  @@index([userId, category])
+  @@index([createdAt])
 }
 
 model Module {
@@ -289,4 +307,580 @@ enum SubmissionStatus {
   UNDER_REVIEW
   COMPLETED
   OVERDUE
+}
+
+enum LeagueTier {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+  DIAMOND
+  MASTER
+}
+
+enum LeagueStatus {
+  ACTIVE
+  FINALIZED
+}
+
+model WeeklyLeague {
+  id          String         @id @default(cuid())
+  tier        LeagueTier     @default(BRONZE)
+  cohortIndex Int            @default(1)
+  weekNumber  Int
+  year        Int
+  startDate   DateTime
+  endDate     DateTime
+  status      LeagueStatus   @default(ACTIVE)
+  createdAt   DateTime       @default(now())
+  members     LeagueMember[]
+
+  @@unique([tier, cohortIndex, weekNumber, year])
+  @@index([status, endDate])
+  @@index([tier, status])
+}
+
+model LeagueMember {
+  id          String       @id @default(cuid())
+  leagueId    String
+  userId      String
+  weeklyXp    Int          @default(0)
+  initialRank Int?
+  finalRank   Int?
+  promoted    Boolean      @default(false)
+  demoted     Boolean      @default(false)
+  joinedAt    DateTime     @default(now())
+  league      WeeklyLeague @relation(fields: [leagueId], references: [id], onDelete: Cascade)
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([leagueId, userId])
+  @@index([leagueId, weeklyXp(sort: Desc)])
+  @@index([userId])
+}
+
+enum CompetitionStatus {
+  UPCOMING
+  ACTIVE
+  COMPLETED
+}
+
+enum CompetitionDifficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum ParticipantStatus {
+  REGISTERED
+  IN_PROGRESS
+  SUBMITTED
+}
+
+model Competition {
+  id              String                   @id @default(cuid())
+  title           String
+  slug            String                   @unique
+  description     String
+  difficulty      CompetitionDifficulty    @default(INTERMEDIATE)
+  status          CompetitionStatus        @default(UPCOMING)
+  startTime       DateTime
+  endTime         DateTime
+  durationMinutes Int                      @default(60)
+  totalPoints     Int                      @default(300)
+  xpReward        Int                      @default(200)
+  rules           String?
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+  problems        CompetitionProblem[]
+  participants    CompetitionParticipant[]
+  certificates    CompetitionCertificate[]
+  nftRewards      NftReward[]
+
+  @@index([status, startTime])
+}
+
+model CompetitionProblem {
+  id            String                  @id @default(cuid())
+  competitionId String
+  title         String
+  orderIndex    Int                     @default(1)
+  description   String
+  codeSnippet   String?
+  type          String                  @default("MULTIPLE_CHOICE")
+  options       Json?
+  correctOption String
+  points        Int                     @default(100)
+  explanation   String?
+  competition   Competition             @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  submissions   CompetitionSubmission[]
+
+  @@index([competitionId, orderIndex])
+}
+
+model CompetitionParticipant {
+  id               String                  @id @default(cuid())
+  competitionId    String
+  userId           String
+  status           ParticipantStatus       @default(REGISTERED)
+  registeredAt     DateTime                @default(now())
+  startedAt        DateTime?
+  submittedAt      DateTime?
+  score            Int                     @default(0)
+  timeTakenSeconds Int                     @default(0)
+  rank             Int?
+  xpAwarded        Int                     @default(0)
+  competition      Competition             @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  user             User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  submissions      CompetitionSubmission[]
+
+  @@unique([competitionId, userId])
+  @@index([competitionId, score(sort: Desc), timeTakenSeconds(sort: Asc)])
+  @@index([userId])
+}
+
+model CompetitionSubmission {
+  id            String                 @id @default(cuid())
+  participantId String
+  problemId     String
+  answer        String
+  isCorrect     Boolean                @default(false)
+  scoreEarned   Int                    @default(0)
+  submittedAt   DateTime               @default(now())
+  participant   CompetitionParticipant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  problem       CompetitionProblem     @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@unique([participantId, problemId])
+  @@index([participantId])
+}
+
+enum AchievementCategory {
+  LEARNING
+  COMPETITION
+  LEAGUE
+  ENGAGEMENT
+}
+
+enum AchievementRarity {
+  COMMON
+  RARE
+  EPIC
+  LEGENDARY
+}
+
+model Achievement {
+  id          String              @id @default(cuid())
+  code        String              @unique
+  title       String
+  description String
+  category    AchievementCategory @default(LEARNING)
+  rarity      AchievementRarity   @default(COMMON)
+  icon        String
+  xpReward    Int                 @default(50)
+  maxProgress Int                 @default(1)
+  createdAt   DateTime            @default(now())
+  users       UserAchievement[]
+
+  @@index([category])
+}
+
+model UserAchievement {
+  id            String      @id @default(cuid())
+  userId        String
+  achievementId String
+  progress      Int         @default(0)
+  isUnlocked    Boolean     @default(false)
+  unlockedAt    DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@index([userId, isUnlocked])
+}
+
+enum CertificateType {
+  COMPLETION
+  DISTINCTION
+  PODIUM
+  CHAMPION
+}
+
+model CompetitionCertificate {
+  id                String          @id @default(cuid())
+  certificateNumber String          @unique
+  userId            String
+  competitionId     String
+  type              CertificateType @default(COMPLETION)
+  recipientName     String
+  title             String
+  score             Int
+  totalPoints       Int
+  rank              Int?
+  timeTakenSeconds  Int
+  issuedAt          DateTime        @default(now())
+  metadata          Json?
+  competition       Competition     @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, competitionId])
+  @@index([certificateNumber])
+  @@index([userId])
+}
+
+enum NftRewardType {
+  ARENA_CHAMPION
+  PODIUM_FINISHER
+  DIVISION_TITAN
+  PROTOCOL_ARCHITECT
+  SEASON_HONOR
+}
+
+enum NftRewardStatus {
+  ELIGIBLE
+  CLAIMING
+  MINTED
+  FAILED
+}
+
+model NftReward {
+  id              String          @id @default(cuid())
+  userId          String
+  competitionId   String?
+  title           String
+  description     String
+  badgeImage      String
+  type            NftRewardType
+  status          NftRewardStatus @default(ELIGIBLE)
+  tier            String          @default("LEGENDARY")
+  contractAddress String?
+  tokenId         String?
+  txHash          String?
+  walletAddress   String?
+  claimedAt       DateTime?
+  metadata        Json?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  competition Competition? @relation(fields: [competitionId], references: [id], onDelete: SetNull)
+
+  @@index([userId, status])
+  @@index([userId])
+  @@index([status])
+}
+
+model UserDailyQuest {
+  id           String    @id @default(cuid())
+  userId       String
+  date         String // YYYY-MM-DD UTC
+  questKey     String // DAILY_LESSON, XP_GOAL, ARENA_PRACTICE
+  title        String
+  description  String
+  targetCount  Int       @default(1)
+  currentCount Int       @default(0)
+  xpReward     Int       @default(30)
+  isCompleted  Boolean   @default(false)
+  isClaimed    Boolean   @default(false)
+  completedAt  DateTime?
+  claimedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date, questKey])
+  @@index([userId, date])
+}
+
+model UserStreak {
+  id                     String    @id @default(cuid())
+  userId                 String    @unique
+  currentStreak          Int       @default(1)
+  longestStreak          Int       @default(1)
+  lastActiveDate         String // YYYY-MM-DD UTC
+  streakFreezesAvailable Int       @default(1)
+  streakFreezeUsedToday  Boolean   @default(false)
+  freezeExpiresAt        DateTime?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+enum ChallengeCategory {
+  LEARNING
+  COMPETITION
+  ASSIGNMENT
+  COMMUNITY
+}
+
+enum ChallengeStatus {
+  UPCOMING
+  ACTIVE
+  COMPLETED
+  EXPIRED
+}
+
+model CommunityChallenge {
+  id              String                          @id @default(cuid())
+  slug            String                          @unique
+  title           String
+  description     String
+  category        ChallengeCategory               @default(LEARNING)
+  status          ChallengeStatus                 @default(ACTIVE)
+  targetCount     Int                             @default(1000)
+  currentCount    Int                             @default(0)
+  minContribution Int                             @default(1)
+  xpReward        Int                             @default(150)
+  rewardBadge     String?
+  bannerImage     String?
+  startDate       DateTime                        @default(now())
+  endDate         DateTime
+  createdAt       DateTime                        @default(now())
+  updatedAt       DateTime                        @updatedAt
+  participants    CommunityChallengeParticipant[]
+
+  @@index([status, endDate])
+  @@index([slug])
+}
+
+model CommunityChallengeParticipant {
+  id                String    @id @default(cuid())
+  challengeId       String
+  userId            String
+  contributionCount Int       @default(0)
+  isClaimed         Boolean   @default(false)
+  claimedAt         DateTime?
+  joinedAt          DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  challenge CommunityChallenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([challengeId, userId])
+  @@index([challengeId])
+  @@index([userId])
+}
+
+enum SeasonStatus {
+  UPCOMING
+  ACTIVE
+  ARCHIVED
+}
+
+model Season {
+  id           String               @id @default(cuid())
+  slug         String               @unique
+  name         String
+  description  String
+  status       SeasonStatus         @default(ACTIVE)
+  startDate    DateTime             @default(now())
+  endDate      DateTime
+  xpMultiplier Float                @default(1.0)
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  snapshots    SeasonUserSnapshot[]
+
+  @@index([status, endDate])
+  @@index([slug])
+}
+
+model SeasonUserSnapshot {
+  id                String   @id @default(cuid())
+  seasonId          String
+  userId            String
+  rank              Int
+  seasonalXp        Int      @default(0)
+  contestsCompleted Int      @default(0)
+  tier              String   @default("GOLD")
+  rewardClaimed     Boolean  @default(false)
+  rewardXp          Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  season Season @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([seasonId, userId])
+  @@index([seasonId, rank])
+  @@index([userId])
+}
+
+// ==========================================
+// ETHShala Quiz League Gamification System
+// ==========================================
+
+enum QuizWeekStatus {
+  UPCOMING
+  ACTIVE
+  FINALIZED
+}
+
+enum QuizStatus {
+  UPCOMING
+  AVAILABLE
+  IN_PROGRESS
+  COMPLETED
+  CLOSED
+}
+
+enum QuizNftStatus {
+  PENDING
+  PROCESSING
+  MINTED
+  FAILED
+}
+
+model QuizWeek {
+  id           String                    @id @default(cuid())
+  weekNumber   Int                       @unique
+  title        String
+  description  String?
+  startDate    DateTime
+  endDate      DateTime
+  status       QuizWeekStatus            @default(ACTIVE)
+  winnerId     String?
+  nftRewardId  String?
+  quizzes      Quiz[]
+  weeklyScores QuizWeeklyScore[]
+  snapshots    QuizLeaderboardSnapshot[]
+  nftReward    QuizNFTReward?
+  createdAt    DateTime                  @default(now())
+  updatedAt    DateTime                  @updatedAt
+
+  @@index([status, endDate])
+  @@index([weekNumber])
+}
+
+model Quiz {
+  id              String     @id @default(cuid())
+  weekId          String
+  dayIndex        Int // 1 (Mon) to 7 (Sun)
+  title           String
+  topic           String
+  description     String?
+  durationMinutes Int        @default(5)
+  maxPoints       Int        @default(100)
+  scheduledFor    DateTime
+  closedAt        DateTime?
+  status          QuizStatus @default(AVAILABLE)
+  isPublished     Boolean    @default(true)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  week      QuizWeek       @relation(fields: [weekId], references: [id], onDelete: Cascade)
+  questions QuizQuestion[]
+  attempts  QuizAttempt[]
+
+  @@unique([weekId, dayIndex])
+  @@index([weekId])
+  @@index([scheduledFor])
+  @@index([status])
+}
+
+model QuizQuestion {
+  id          String   @id @default(cuid())
+  quizId      String
+  orderIndex  Int
+  question    String
+  codeSnippet String?
+  explanation String
+  points      Int      @default(20)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  quiz    Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  options QuizOption[]
+
+  @@index([quizId, orderIndex])
+}
+
+model QuizOption {
+  id         String  @id @default(cuid())
+  questionId String
+  orderIndex Int
+  text       String
+  isCorrect  Boolean @default(false)
+
+  question QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId])
+}
+
+model QuizAttempt {
+  id               String   @id @default(cuid())
+  quizId           String
+  userId           String
+  score            Int // Points scored (e.g. 100)
+  pointsEarned     Int
+  totalQuestions   Int
+  correctAnswers   Int
+  timeSpentSeconds Int      @default(0)
+  userAnswers      Json // Array of { questionId, selectedOptionId, isCorrect, points }
+  completedAt      DateTime @default(now())
+
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, quizId])
+  @@index([quizId])
+  @@index([userId])
+  @@index([completedAt])
+}
+
+model QuizWeeklyScore {
+  id               String   @id @default(cuid())
+  weekId           String
+  userId           String
+  totalPoints      Int      @default(0)
+  quizzesCompleted Int      @default(0)
+  currentStreak    Int      @default(0)
+  longestStreak    Int      @default(0)
+  rank             Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  week QuizWeek @relation(fields: [weekId], references: [id], onDelete: Cascade)
+  user User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([weekId, userId])
+  @@index([weekId, totalPoints(sort: Desc)])
+  @@index([userId])
+}
+
+model QuizLeaderboardSnapshot {
+  id         String   @id @default(cuid())
+  weekId     String
+  snapshotAt DateTime @default(now())
+  rankings   Json // Stored array of top rankings for historical fidelity
+
+  week QuizWeek @relation(fields: [weekId], references: [id], onDelete: Cascade)
+
+  @@index([weekId, snapshotAt])
+}
+
+model QuizNFTReward {
+  id               String        @id @default(cuid())
+  weekId           String        @unique
+  winnerId         String
+  recipientAddress String
+  tokenId          String?
+  tokenUri         String?
+  txHash           String?
+  status           QuizNftStatus @default(PENDING)
+  network          String        @default("Gnosis Chain")
+  chainId          Int           @default(100)
+  errorMessage     String?
+  mintedAt         DateTime?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  week   QuizWeek @relation(fields: [weekId], references: [id], onDelete: Cascade)
+  winner User     @relation(fields: [winnerId], references: [id], onDelete: Cascade)
+
+  @@index([winnerId])
+  @@index([status])
 }
