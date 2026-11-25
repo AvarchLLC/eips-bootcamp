@@ -24,13 +24,30 @@ export async function POST(
     }
 
     const sessionKey = `quiz_session:${user.id}:${quiz.id}`;
-    const startedAt = new Date();
-    // Expiration after duration + 10 mins buffer
-    const expiresAt = new Date(startedAt.getTime() + (quiz.durationMinutes + 10) * 60 * 1000);
-
-    await prisma.verification.deleteMany({
+    const existingSession = await prisma.verification.findFirst({
       where: { identifier: sessionKey },
+      orderBy: { createdAt: 'desc' },
     });
+
+    if (existingSession) {
+      const startedAt = new Date(existingSession.value);
+      const elapsedSeconds = Math.floor((Date.now() - startedAt.getTime()) / 1000);
+      if (
+        !Number.isFinite(startedAt.getTime()) ||
+        elapsedSeconds > quiz.durationMinutes * 60 + 45
+      ) {
+        return NextResponse.json({ error: 'This quiz session has expired' }, { status: 400 });
+      }
+
+      return NextResponse.json({
+        success: true,
+        startedAt: startedAt.toISOString(),
+        durationMinutes: quiz.durationMinutes,
+      });
+    }
+
+    const startedAt = new Date();
+    const expiresAt = new Date(startedAt.getTime() + (quiz.durationMinutes * 60 + 45) * 1000);
 
     await prisma.verification.create({
       data: {

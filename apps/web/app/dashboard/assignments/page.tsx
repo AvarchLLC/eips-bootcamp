@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, Search, FileText } from 'lucide-react';
+import LoadingScreen from '@/app/components/ui/LoadingScreen';
 import { DashboardShell } from '@/app/components/dashboard/DashboardShell';
 import { AssignmentStats } from '@/app/components/assignments/AssignmentStats';
 import { AssignmentFilters } from '@/app/components/assignments/AssignmentFilters';
@@ -47,6 +48,18 @@ export default function AssignmentsPage() {
   useEffect(() => {
     if (user?.id) fetchAssignments();
   }, [user?.id]);
+
+  if (loading) {
+    return (
+      <DashboardShell>
+        <div className="flex items-center justify-center h-96">
+          <div className="w-full flex items-center justify-center py-20">
+            <LoadingScreen text="LOADING LEARNING MODULE..." fullScreen={false} />
+          </div>
+        </div>
+      </DashboardShell>
+    );
+  }
 
   const handleSubmit = async (assignmentId: string, file?: File) => {
     if (!user?.id) return;

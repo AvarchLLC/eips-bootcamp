@@ -32,6 +32,7 @@ export async function POST(
 
     const body = await request.json();
     const { answers, timeSpentSeconds = 0, isPractice = false } = body;
+    let authoritativeTimeSpentSeconds = Math.max(0, Number(timeSpentSeconds) || 0);
 
     if (!answers || !Array.isArray(answers)) {
       return NextResponse.json({ error: 'Invalid answers format' }, { status: 400 });
@@ -82,22 +83,20 @@ export async function POST(
         orderBy: { createdAt: 'desc' },
       });
 
-      if (sessionRecord) {
-        const startedAtMs = new Date(sessionRecord.value).getTime();
-        const elapsedSecs = Math.floor((Date.now() - startedAtMs) / 1000);
-        // Allowed quiz duration in seconds + 45s latency grace period
-        const maxAllowedSecs = (quiz.durationMinutes * 60) + 45;
-
-        if (elapsedSecs > maxAllowedSecs) {
-          return NextResponse.json(
-            { error: `Time limit exceeded. Server recorded ${elapsedSecs}s elapsed, exceeding the ${maxAllowedSecs}s maximum allowed window.` },
-            { status: 400 }
-          );
-        }
-
-        // Clean up verification session token
-        await prisma.verification.deleteMany({ where: { identifier: sessionKey } }).catch(() => {});
+      if (!sessionRecord) {
+        return NextResponse.json({ error: 'Start the quiz before submitting it' }, { status: 400 });
       }
+
+      const startedAtMs = new Date(sessionRecord.value).getTime();
+      const elapsedSecs = Math.floor((Date.now() - startedAtMs) / 1000);
+      const maxAllowedSecs = quiz.durationMinutes * 60 + 45;
+      if (!Number.isFinite(startedAtMs) || elapsedSecs < 0 || elapsedSecs > maxAllowedSecs) {
+        return NextResponse.json(
+          { error: `Time limit exceeded. Server recorded ${elapsedSecs}s elapsed, exceeding the ${maxAllowedSecs}s maximum allowed window.` },
+          { status: 400 },
+        );
+      }
+      authoritativeTimeSpentSeconds = elapsedSecs;
     }
 
     // 3. Multi-Format Server-Side Score Calculation
@@ -130,7 +129,12 @@ export async function POST(
 
       if (qType === 'MULTIPLE_CHOICE') {
         const correctOptIds = question.options.filter(o => o.isCorrect).map(o => o.id);
-        const selectedIds = multiAnswerMap.get(question.id) || (singleAnswerMap.get(question.id) ? [singleAnswerMap.get(question.id)!] : []);
+        const selectedIds = [
+          ...new Set(
+            multiAnswerMap.get(question.id) ||
+              (singleAnswerMap.get(question.id) ? [singleAnswerMap.get(question.id)!] : []),
+          ),
+        ];
 
         const correctSet = new Set(correctOptIds);
 
@@ -195,10 +199,8 @@ export async function POST(
         });
       }
 
-      if (isCorrect) {
-        correctCount++;
-        pointsEarned += awardedPoints;
-      }
+      if (isCorrect) correctCount++;
+      pointsEarned += awardedPoints;
     }
 
     const scorePercentage = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
@@ -214,7 +216,7 @@ export async function POST(
           pointsEarned: 0,
           totalQuestions,
           correctAnswers: correctCount,
-          timeSpentSeconds: Number(timeSpentSeconds) || 0,
+          timeSpentSeconds: authoritativeTimeSpentSeconds,
           breakdown: userAnswersBreakdown,
           isPractice: true,
         },
