@@ -13,6 +13,7 @@ model User {
   username                  String?                         @unique
   walletAddress             String?                         @unique
   role                      UserRole                        @default(STUDENT)
+  coinBalance               Int                             @default(0)
   createdAt                 DateTime                        @default(now())
   updatedAt                 DateTime                        @updatedAt
   emailVerified             Boolean                         @default(false)
@@ -23,10 +24,12 @@ model User {
   achievements              UserAchievement[]
   assignmentSubmissions     AssignmentSubmission[]
   capApplication            CAPApplication?
+  coinTransactions          CoinTransaction[]
   communityParticipations   CommunityChallengeParticipant[]
   competitionCertificates   CompetitionCertificate[]
   competitionParticipations CompetitionParticipant[]
   dailyQuests               UserDailyQuest[]
+  inventoryItems            UserInventory[]
   leagueMemberships         LeagueMember[]
   lessonProgress            LessonProgress[]
   moduleSubscriptions       ModuleSubscription[]
@@ -157,6 +160,55 @@ model XPTransaction {
   @@index([userId])
   @@index([userId, category])
   @@index([createdAt])
+}
+
+enum CoinTransactionType {
+  EARNED
+  SPENT
+  TOPUP
+  REFUND
+  REWARD
+}
+
+model CoinTransaction {
+  id          String              @id @default(cuid())
+  userId      String
+  amount      Int
+  type        CoinTransactionType @default(EARNED)
+  reason      String
+  category    String              @default("GENERAL") // QUIZ, ARCADE, MISSION, PURCHASE, TOPUP, ADMIN
+  referenceId String?
+  createdAt   DateTime            @default(now())
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, category])
+  @@index([createdAt])
+}
+
+enum InventoryItemType {
+  AVATAR
+  FRAME
+  THEME
+  BOOST
+  BADGE
+}
+
+model UserInventory {
+  id         String            @id @default(cuid())
+  userId     String
+  itemId     String
+  itemType   InventoryItemType @default(AVATAR)
+  name       String
+  isEquipped Boolean           @default(false)
+  metadata   Json?
+  acquiredAt DateTime          @default(now())
+  user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, itemId])
+  @@index([userId])
+  @@index([userId, itemType])
+  @@index([userId, isEquipped])
 }
 
 model Module {

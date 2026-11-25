@@ -24,6 +24,7 @@ import {
   ChevronRight,
   PanelLeftClose,
   PanelLeftOpen,
+  Wallet,
 } from 'lucide-react';
 
 interface NavItem {
@@ -41,6 +42,7 @@ interface SidebarProps {
 
 const mainNav: NavItem[] = [
   { label: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard size={18} /> },
+  { label: 'Wallet & Coins', href: '/dashboard/wallet', icon: <Wallet size={18} /> },
   { label: 'My Modules', href: '/dashboard/my-modules', icon: <Layers size={18} /> },
   { label: 'Course Catalog', href: '/dashboard/marketplace', icon: <BookOpen size={18} /> },
   { label: 'Assignments', href: '/dashboard/assignments', icon: <FileText size={18} /> },

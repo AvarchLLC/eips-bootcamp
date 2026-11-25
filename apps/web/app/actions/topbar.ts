@@ -38,6 +38,22 @@ export async function getUserTotalXp() {
   }
 }
 
+export async function getUserCoinBalance() {
+  try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user?.id) return 0;
+    
+    const dbUser = await prisma.user.findFirst({
+      where: { id: session.user.id },
+      select: { coinBalance: true },
+    });
+    return dbUser?.coinBalance || 0;
+  } catch (error) {
+    console.error('Error fetching user coin balance:', error);
+    return 0;
+  }
+}
+
 export interface AppNotification {
   id: string;
   title: string;
