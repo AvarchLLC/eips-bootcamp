@@ -7,6 +7,7 @@ import {
   getUserCoinHistory as getHistory,
   getUserInventory as getInventory,
   equipInventoryItem as equipItem,
+  type CoinOperationResult,
 } from '@/app/lib/coins';
 import { InventoryItemType } from '@prisma/client';
 
@@ -51,5 +52,22 @@ export async function equipItemAction(itemId: string, itemType: InventoryItemTyp
   } catch (error: any) {
     console.error('Failed to equip item:', error);
     return { success: false, error: error?.message || 'Failed to equip item' };
+  }
+}
+
+export async function topUpCoinsAction(amount: number, packageName: string): Promise<CoinOperationResult> {
+  try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user?.id) return { success: false, error: 'Unauthorized' };
+    const { creditCoins } = await import('@/app/lib/coins');
+    return await creditCoins(
+      session.user.id,
+      amount,
+      `Top-Up: ${packageName}`,
+      'TOPUP'
+    );
+  } catch (error: any) {
+    console.error('Failed to top up coins:', error);
+    return { success: false, error: error?.message || 'Top-up failed' };
   }
 }

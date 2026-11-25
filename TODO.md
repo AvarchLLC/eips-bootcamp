@@ -94,11 +94,11 @@ To avoid stepping on each other's code and maintain high momentum, the remaining
   - Render a scannable QR code on the certificate linking directly to this verification URL.
 
 ### Phase 2 Tasks (Due: Nov 28 – Nov 29) `[P0 / P1]`
-- [ ] **Task RC-5: Student Wallet Page (`/dashboard/wallet/page.tsx`)**
+- [x] **Task RC-5: Student Wallet Page (`/dashboard/wallet/page.tsx`)**
   - Header showing connected Ethereum wallet address (via Wagmi) with a "Copy Address" button and Base network indicator badge.
   - Coin Balance Card showing total available `ESHC` coins and fiat equivalent estimate.
   - Transaction History Table listing earned and spent coin activity.
-  - "Top-Up Coins" modal trigger.
+  - "Top-Up Coins" modal trigger and student test faucet.
 
 ---
 
