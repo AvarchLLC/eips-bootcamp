@@ -9,6 +9,7 @@ import { WalletCards } from '@/app/components/wallet/WalletCards';
 import { TransactionHistory, CoinTransactionItem } from '@/app/components/wallet/TransactionHistory';
 import { TopUpModal } from '@/app/components/wallet/TopUpModal';
 import { getUserCoinBalanceAction, getUserCoinHistoryAction } from '@/app/actions/coins';
+import { getLinkedWalletAction } from '@/app/actions/siwe';
 import { RefreshCw, Wallet, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -20,18 +21,21 @@ export default function WalletPage() {
 
   const [coinBalance, setCoinBalance] = useState<number>(0);
   const [transactions, setTransactions] = useState<CoinTransactionItem[]>([]);
+  const [linkedWallet, setLinkedWallet] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [isTopUpOpen, setIsTopUpOpen] = useState(false);
 
   const loadWalletData = useCallback(async () => {
     try {
-      const [balance, history] = await Promise.all([
+      const [balance, history, linkedWalletRes] = await Promise.all([
         getUserCoinBalanceAction(),
         getUserCoinHistoryAction(50),
+        getLinkedWalletAction(),
       ]);
       setCoinBalance(balance);
       setTransactions(history as CoinTransactionItem[]);
+      setLinkedWallet(linkedWalletRes.walletAddress);
     } catch (err) {
       console.error('Failed to load wallet data:', err);
       toast.error('Failed to load wallet data');
@@ -123,7 +127,9 @@ export default function WalletPage() {
           coinBalance={coinBalance}
           totalEarned={totalEarned}
           totalSpent={totalSpent}
+          linkedWalletAddress={linkedWallet}
           onOpenTopUp={() => setIsTopUpOpen(true)}
+          onWalletLinked={setLinkedWallet}
         />
 
         {/* 2. Transaction Ledger History */}

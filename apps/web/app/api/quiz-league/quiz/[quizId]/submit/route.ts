@@ -285,10 +285,32 @@ export async function POST(
         },
       });
 
-      return newAttempt;
+      // 7. Award ETHShala Coins (ESHC) atomically
+      const coinsEarned = pointsEarned > 0 ? Math.max(10, Math.round(pointsEarned * 0.25)) : 0;
+      if (coinsEarned > 0) {
+        await tx.coinTransaction.create({
+          data: {
+            userId: user.id,
+            amount: coinsEarned,
+            type: 'EARNED',
+            reason: `Quiz League Day ${quiz.dayIndex}: ${quiz.title} (${scorePercentage}%)`,
+            category: 'QUIZ',
+            referenceId: `quiz_${quiz.id}_${Date.now()}`,
+          },
+        });
+
+        await tx.user.update({
+          where: { id: user.id },
+          data: {
+            coinBalance: { increment: coinsEarned },
+          },
+        });
+      }
+
+      return { newAttempt, coinsEarned };
     });
 
-    // 7. Recalculate Ranks for the week
+    // 8. Recalculate Ranks for the week
     await recalculateWeekRanks(quiz.weekId);
 
     // Fetch updated weekly score and rank
@@ -304,12 +326,13 @@ export async function POST(
     return NextResponse.json({
       success: true,
       result: {
-        attemptId: attempt.id,
+        attemptId: attempt.newAttempt.id,
         score: scorePercentage,
         pointsEarned,
+        coinsEarned: attempt.coinsEarned,
         totalQuestions,
         correctAnswers: correctCount,
-        timeSpentSeconds: attempt.timeSpentSeconds,
+        timeSpentSeconds: attempt.newAttempt.timeSpentSeconds,
         breakdown: userAnswersBreakdown,
         newRank: updatedScore?.rank || 1,
         totalWeeklyPoints: updatedScore?.totalPoints || pointsEarned,

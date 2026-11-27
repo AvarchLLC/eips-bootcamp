@@ -8,7 +8,9 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "dev:web": "pnpm --filter web dev",
-    "dev:api": "pnpm --filter api start:dev"
+    "dev:api": "pnpm --filter api start:dev",
+    "compile:contracts": "mkdir -p contracts/artifacts && npx --yes solc --bin --abi --optimize -o contracts/artifacts contracts/ETHShalaCoin.sol contracts/ETHShalaQuizChampion.sol",
+    "deploy:coin": "NODE_PATH=./apps/web/node_modules npx --yes tsx contracts/scripts/deploy-coin.ts"
   },
   "devDependencies": {
     "@prisma/client": "^6.19.3",

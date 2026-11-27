@@ -112,19 +112,26 @@ To avoid stepping on each other's code and maintain high momentum, the remaining
   - Add `CoinTransaction` model (`id`, `userId`, `amount`, `type`, `reason`, `referenceId`, `createdAt`).
   - Add `UserInventory` model (`id`, `userId`, `itemId`, `itemType`, `isEquipped`, `acquiredAt`).
   - Run `npx prisma db push` and `npx prisma generate`.
-- [ ] **Task DN-2: Base ERC-20 Smart Contract (`ETHShalaCoin.sol`)**
-  - Write standard OpenZeppelin ERC-20 contract for `ETHShalaCoin` (`ESHC`).
-  - Deploy to Base Sepolia testnet and verify on Basescan.
+- [x] **Task DN-2: Base ERC-20 Smart Contract (`ETHShalaCoin.sol`)**
+  - Standard Solidity 0.8.20 ERC-20 contract with 100M ESHC cap, mint/burn controls, and role-based permissions (`contracts/ETHShalaCoin.sol`).
+  - Base Sepolia deployment automation script (`contracts/scripts/deploy-coin.ts`).
+  - Frontend contract ABI, addresses, and unit parsers (`apps/web/app/lib/contracts/ethshala-coin.ts`).
+  - Added Base Sepolia support to RainbowKit & Wagmi provider (`apps/web/app/components/Web3Provider.tsx`).
 - [x] **Task DN-3: Coin Ledger Service & Reward Hooks (`/app/lib/coins.ts`)**
   - Build helper methods: `creditCoins(userId, amount, reason, refId)` and `debitCoins(userId, amount, reason)`.
   - Export server actions for coin operations (`/app/actions/coins.ts`).
+  - Wire automatic coin awards into Quiz League submission route (`/api/quiz-league/quiz/[quizId]/submit`).
 
 ### Phase 2 Tasks (Due: Nov 28 – Nov 29) `[P0 / P1]`
-- [ ] **Task DN-4: Admin Payment Review Page (`/dashboard/admin/payments/page.tsx`)**
+- [x] **Task DN-4: Admin Payment Review Page (`/dashboard/admin/payments/page.tsx`)**
   - Table of pending or completed crypto and PayPal transactions.
   - 1-click "Approve & Grant Module Access" button for manual bank/crypto receipts.
-- [ ] **Task DN-5: Sign-In With Ethereum (SIWE)**
-  - Add SIWE wallet signature verification linked with existing Better Auth session.
+  - Module access revocation, revenue metrics, and verification audit trail.
+- [x] **Task DN-5: Sign-In With Ethereum (SIWE)**
+  - Stateless cryptographic SIWE challenge generation with HMAC anti-tamper token (`/app/actions/siwe.ts`).
+  - Viem EIP-191 message signature verification and duplicate address protection.
+  - Linked wallet persistence on `User.walletAddress` in Prisma with unlink capability.
+  - Interactive "Sign & Link Wallet" and "Verified Student Address" badges in student wallet (`/app/components/wallet/WalletCards.tsx`).
 
 ---
 

@@ -25,6 +25,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Wallet,
+  CreditCard,
 } from 'lucide-react';
 
 interface NavItem {
@@ -58,6 +59,7 @@ const capNav: NavItem[] = [
 ];
 
 const adminNav: NavItem[] = [
+  { label: 'Payment Audits', href: '/dashboard/admin/payments', icon: <CreditCard size={18} /> },
   { label: 'Admin Analytics', href: '/dashboard/admin/analytics', icon: <BarChart2 size={18} /> },
   { label: 'Applications', href: '/dashboard/admin/applications', icon: <ClipboardList size={18} /> },
   { label: 'Manage ETHShala', href: '/dashboard/admin/bootcamp', icon: <Layers size={18} /> },

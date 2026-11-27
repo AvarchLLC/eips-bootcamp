@@ -17,6 +17,7 @@ import {
   arbitrum,
   base,
   sepolia,
+  baseSepolia,
 } from 'wagmi/chains';
 import {
   QueryClientProvider,
@@ -30,7 +31,7 @@ import { http } from 'wagmi';
 const config = getDefaultConfig({
   appName: 'ETHShala',
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'c03554e26fbbf209dc9bd4f49488e0db',
-  chains: [mainnet, polygon, optimism, arbitrum, base, sepolia],
+  chains: [mainnet, polygon, optimism, arbitrum, base, sepolia, baseSepolia],
   transports: {
     [mainnet.id]: http('https://cloudflare-eth.com'),
     [polygon.id]: http(),
@@ -38,6 +39,7 @@ const config = getDefaultConfig({
     [arbitrum.id]: http(),
     [base.id]: http(),
     [sepolia.id]: http(),
+    [baseSepolia.id]: http(),
   },
   ssr: true,
 });
